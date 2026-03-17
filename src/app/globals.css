@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #1A1A1A;
+  --accent: #D50032;
+  --dark-gray: #4A4A4A;
+  --mid-gray: #8C8C8C;
+  --light-gray: #E5E5E5;
+  --off-white: #F7F7F7;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-dark-gray: var(--dark-gray);
+  --color-mid-gray: var(--mid-gray);
+  --color-light-gray: var(--light-gray);
+  --color-off-white: var(--off-white);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Fabric.js canvas overrides */
+.canvas-container {
+  margin: 0 auto;
+}
