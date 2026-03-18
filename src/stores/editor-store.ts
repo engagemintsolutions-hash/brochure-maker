@@ -20,6 +20,9 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   redoStack: [],
   isDirty: false,
   isSaving: false,
+  thumbnails: {},
+  showGrid: false,
+  canvasVersion: 0,
 
   setBrochure: (
     brochureId: string,
@@ -121,4 +124,14 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   markClean: () => set({ isDirty: false }),
   markDirty: () => set({ isDirty: true }),
   setSaving: (saving: boolean) => set({ isSaving: saving }),
+
+  setThumbnail: (index: number, dataUrl: string) => {
+    set((state) => ({ thumbnails: { ...state.thumbnails, [index]: dataUrl } }));
+  },
+
+  setShowGrid: (show: boolean) => set({ showGrid: show }),
+
+  bumpCanvasVersion: () => {
+    set((state) => ({ canvasVersion: state.canvasVersion + 1 }));
+  },
 }));

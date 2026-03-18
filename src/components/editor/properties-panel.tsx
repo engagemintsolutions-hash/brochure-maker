@@ -121,20 +121,33 @@ export function PropertiesPanel() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Weight</label>
-              <select
-                value={String((selectedObject as fabric.Textbox).fontWeight || 'normal')}
-                onChange={(e) => {
-                  (selectedObject as fabric.Textbox).set('fontWeight', e.target.value);
-                  canvas?.renderAll();
-                }}
-                className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm"
-              >
-                <option value="normal">Normal</option>
-                <option value="bold">Bold</option>
-                <option value="300">Light</option>
-                <option value="600">Semibold</option>
-              </select>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Style</label>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => {
+                    const tb = selectedObject as fabric.Textbox;
+                    tb.set('fontWeight', tb.fontWeight === 'bold' ? 'normal' : 'bold');
+                    canvas?.renderAll();
+                  }}
+                  className={`flex-1 py-1 text-xs font-bold rounded border ${(selectedObject as fabric.Textbox).fontWeight === 'bold' ? 'bg-gray-200 border-gray-400' : 'border-gray-200 hover:bg-gray-50'}`}
+                >B</button>
+                <button
+                  onClick={() => {
+                    const tb = selectedObject as fabric.Textbox;
+                    tb.set('fontStyle', tb.fontStyle === 'italic' ? 'normal' : 'italic');
+                    canvas?.renderAll();
+                  }}
+                  className={`flex-1 py-1 text-xs italic rounded border ${(selectedObject as fabric.Textbox).fontStyle === 'italic' ? 'bg-gray-200 border-gray-400' : 'border-gray-200 hover:bg-gray-50'}`}
+                >I</button>
+                <button
+                  onClick={() => {
+                    const tb = selectedObject as fabric.Textbox;
+                    tb.set('underline', !tb.underline);
+                    canvas?.renderAll();
+                  }}
+                  className={`flex-1 py-1 text-xs underline rounded border ${(selectedObject as fabric.Textbox).underline ? 'bg-gray-200 border-gray-400' : 'border-gray-200 hover:bg-gray-50'}`}
+                >U</button>
+              </div>
             </div>
           </div>
 
@@ -206,6 +219,26 @@ export function PropertiesPanel() {
         </div>
       )}
 
+      {/* Opacity (for both text and images) */}
+      {(isText || isImage) && (
+        <div className="border-t border-gray-200 pt-3 mt-3">
+          <label className="block text-xs font-medium text-gray-600 mb-1">Opacity</label>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={selectedObject?.opacity || 1}
+            onChange={(e) => {
+              selectedObject?.set('opacity', parseFloat(e.target.value));
+              canvas?.requestRenderAll();
+            }}
+            className="w-full h-1.5 accent-[var(--accent)]"
+          />
+          <div className="text-[10px] text-gray-400 text-right">{Math.round((selectedObject?.opacity || 1) * 100)}%</div>
+        </div>
+      )}
+
       {/* Image properties */}
       {isImage && (
         <div className="space-y-4">
@@ -218,6 +251,34 @@ export function PropertiesPanel() {
             <div>W: {Math.round((selectedObject?.width || 0) * (selectedObject?.scaleX || 1))}</div>
             <div>H: {Math.round((selectedObject?.height || 0) * (selectedObject?.scaleY || 1))}</div>
           </div>
+          <button
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'image/*';
+              input.onchange = async (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0];
+                if (!file || !canvas || !selectedObject) return;
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                  const dataUrl = ev.target?.result as string;
+                  if (!dataUrl) return;
+                  const name = (selectedObject as fabric.FabricObject & { name?: string }).name || '';
+                  const { loadImageIntoFrame } = await import('@/lib/editor/fabric-helpers');
+                  await loadImageIntoFrame(canvas, name, dataUrl);
+                  const store = useEditorStore.getState();
+                  store.pushUndo();
+                  const json = (await import('@/lib/editor/fabric-helpers')).getCanvasJson(canvas);
+                  store.updatePageCanvas(store.activePageIndex, json);
+                };
+                reader.readAsDataURL(file);
+              };
+              input.click();
+            }}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm border border-gray-200 rounded hover:bg-gray-50 transition-colors"
+          >
+            Replace Image
+          </button>
         </div>
       )}
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Undo2, Redo2, ZoomIn, ZoomOut, Save, Download, Loader2 } from 'lucide-react';
+import { Undo2, Redo2, ZoomIn, ZoomOut, Save, Download, Loader2, Grid3X3 } from 'lucide-react';
 import { useEditorStore } from '@/stores/editor-store';
 import { ExportDialog } from './export-dialog';
 import { ColorPicker } from './color-picker';
@@ -20,6 +20,8 @@ export function Toolbar() {
   const isSaving = useEditorStore((s) => s.isSaving);
   const accentColor = useEditorStore((s) => s.accentColor);
   const setAccentColor = useEditorStore((s) => s.setAccentColor);
+  const showGrid = useEditorStore((s) => s.showGrid);
+  const setShowGrid = useEditorStore((s) => s.setShowGrid);
   const pages = useEditorStore((s) => s.pages);
   const activePageIndex = useEditorStore((s) => s.activePageIndex);
 
@@ -66,6 +68,16 @@ export function Toolbar() {
             className="p-2 rounded hover:bg-gray-100 disabled:opacity-30"
           >
             <ZoomIn className="w-4 h-4" />
+          </button>
+
+          <div className="w-px h-6 bg-gray-200 mx-1" />
+
+          <button
+            onClick={() => setShowGrid(!showGrid)}
+            className={`p-2 rounded transition-colors ${showGrid ? 'bg-gray-200 text-gray-900' : 'hover:bg-gray-100 text-gray-500'}`}
+            title="Toggle grid"
+          >
+            <Grid3X3 className="w-4 h-4" />
           </button>
         </div>
 
