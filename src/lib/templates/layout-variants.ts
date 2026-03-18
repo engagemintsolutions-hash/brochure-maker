@@ -12,7 +12,13 @@ export type LayoutVariant =
   | 'editorial-magazine'
   | 'horizontal-bands'
   | 'framed-gallery'
-  | 'sidebar-panel';
+  | 'sidebar-panel'
+  | 'dark-luxury'
+  | 'photo-mosaic'
+  | 'classic-two-column'
+  | 'panoramic-strip'
+  | 'card-stack'
+  | 'corner-accent';
 
 // ──────────────────────────────────────
 // Shared position types
@@ -520,6 +526,340 @@ const sidebar = {
 };
 
 // ──────────────────────────────────────
+// 9. DARK LUXURY
+// Dark backgrounds, gold text, premium feel
+// ──────────────────────────────────────
+
+const darkLuxury = {
+  cover: {
+    heroImage: { left: 0, top: 0, width: 1754, height: 1240 },
+    overlayRect: { left: 0, top: 0, width: 1754, height: 1240, fill: 'rgba(0,0,0,0.4)' },
+    addressText: { left: 200, top: 480, width: 1354, height: 90, align: 'center', fontSize: 56 },
+    priceLine: { left: 200, top: 620, width: 1354, height: 40, align: 'center', fontSize: 24 },
+    accentLine: { left: 777, top: 590, width: 200 },
+    textColorLight: true,
+  } as CoverLayout,
+  overview: {
+    heading: { left: 120, top: 80 },
+    priceBlock: { left: 120, top: 160, width: 600 },
+    statsRow: { left: 120, top: 205, width: 600 },
+    introText: { left: 120, top: 260, width: 600, height: 200 },
+    features: { left: 120, top: 490, width: 600, height: 400 },
+    photos: [{ left: 800, top: 80, width: 874, height: 550 }, { left: 800, top: 660, width: 874, height: 480 }],
+  } as OverviewLayout,
+  situation: {
+    heading: { left: 120, top: 80 },
+    textBlocks: [{ left: 120, top: 170, width: 700, height: 950 }],
+    photos: [{ left: 880, top: 80, width: 794, height: 1060 }],
+  } as ContentLayout,
+  accom1: {
+    heading: { left: 120, top: 40 },
+    textBlocks: [{ left: 120, top: 600, width: 700, height: 540 }],
+    photos: [{ left: 120, top: 100, width: 750, height: 470 }, { left: 900, top: 100, width: 734, height: 470 }, { left: 880, top: 600, width: 794, height: 540 }],
+  } as ContentLayout,
+  accom2: {
+    heading: { left: 120, top: 40 },
+    textBlocks: [{ left: 900, top: 600, width: 734, height: 540 }],
+    photos: [{ left: 120, top: 100, width: 1554, height: 470 }, { left: 120, top: 600, width: 740, height: 540 }],
+  } as ContentLayout,
+  outside: {
+    heading: { left: 120, top: 40 },
+    textBlocks: [{ left: 120, top: 700, width: 1514, height: 440 }],
+    photos: [{ left: 0, top: 80, width: 1754, height: 590 }],
+  } as ContentLayout,
+  details: {
+    heading: { left: 120, top: 80 },
+    leftColumn: { left: 120, top: 170, width: 700, height: 600 },
+    rightColumn: { left: 900, top: 170, width: 734, height: 400 },
+    legalText: { left: 120, top: 1040, width: 1514, height: 120 },
+  } as DetailsLayout,
+  location: {
+    photo: { left: 0, top: 0, width: 1754, height: 1000 },
+    strip: { left: 0, top: 1000, width: 1754, height: 240 },
+    addressText: { left: 120, top: 1030, width: 800 },
+    agentText: { left: 120, top: 1090, width: 800 },
+  } as LocationLayout,
+};
+
+// ──────────────────────────────────────
+// 10. PHOTO MOSAIC
+// Asymmetric photo collage, photos at varying sizes
+// ──────────────────────────────────────
+
+const mosaic = {
+  cover: {
+    heroImage: { left: 0, top: 0, width: 1200, height: 1240 },
+    panelRect: { left: 1200, top: 0, width: 554, height: 1240, fill: '__primary__' },
+    addressText: { left: 1230, top: 300, width: 494, height: 90, align: 'left', fontSize: 36 },
+    priceLine: { left: 1230, top: 430, width: 494, height: 40, align: 'left', fontSize: 20 },
+    accentLine: { left: 1230, top: 410, width: 150 },
+    textColorLight: true,
+  } as CoverLayout,
+  overview: {
+    heading: { left: 80, top: 60 },
+    priceBlock: { left: 80, top: 140, width: 500 },
+    statsRow: { left: 80, top: 185, width: 500 },
+    introText: { left: 80, top: 240, width: 500, height: 160 },
+    features: { left: 80, top: 430, width: 500, height: 350 },
+    photos: [{ left: 620, top: 60, width: 560, height: 400 }, { left: 1200, top: 60, width: 474, height: 400 }, { left: 620, top: 480, width: 1054, height: 340 }, { left: 80, top: 840, width: 800, height: 340 }, { left: 900, top: 840, width: 774, height: 340 }],
+  } as OverviewLayout,
+  situation: {
+    heading: { left: 80, top: 60 },
+    textBlocks: [{ left: 80, top: 150, width: 600, height: 500 }],
+    photos: [{ left: 720, top: 60, width: 954, height: 600 }, { left: 80, top: 700, width: 820, height: 440 }, { left: 920, top: 700, width: 754, height: 440 }],
+  } as ContentLayout,
+  accom1: {
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 80, top: 700, width: 1594, height: 440 }],
+    photos: [{ left: 80, top: 80, width: 600, height: 590 }, { left: 700, top: 80, width: 480, height: 290 }, { left: 1200, top: 80, width: 474, height: 290 }, { left: 700, top: 390, width: 974, height: 290 }],
+  } as ContentLayout,
+  accom2: {
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 80, top: 700, width: 1594, height: 440 }],
+    photos: [{ left: 80, top: 80, width: 1054, height: 590 }, { left: 1154, top: 80, width: 520, height: 290 }, { left: 1154, top: 390, width: 520, height: 290 }],
+  } as ContentLayout,
+  outside: {
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 80, top: 680, width: 1594, height: 460 }],
+    photos: [{ left: 0, top: 70, width: 1100, height: 580 }, { left: 1120, top: 70, width: 554, height: 580 }],
+  } as ContentLayout,
+  details: {
+    heading: { left: 80, top: 60 },
+    leftColumn: { left: 80, top: 150, width: 760, height: 600 },
+    rightColumn: { left: 920, top: 150, width: 754, height: 400 },
+    legalText: { left: 80, top: 1040, width: 1594, height: 120 },
+  } as DetailsLayout,
+  location: {
+    photo: { left: 0, top: 0, width: 1200, height: 1240 },
+    strip: { left: 1200, top: 0, width: 554, height: 1240 },
+    addressText: { left: 1230, top: 400, width: 494 },
+    agentText: { left: 1230, top: 460, width: 494 },
+  } as LocationLayout,
+};
+
+// ──────────────────────────────────────
+// 11. CLASSIC TWO-COLUMN
+// Traditional estate agent layout, text+photo columns
+// ──────────────────────────────────────
+
+const twoColumn = {
+  cover: {
+    heroImage: { left: 0, top: 0, width: 1754, height: 900 },
+    overlayRect: { left: 0, top: 900, width: 1754, height: 340, fill: '__background__' },
+    addressText: { left: 80, top: 930, width: 1594, height: 70, align: 'left', fontSize: 42 },
+    priceLine: { left: 80, top: 1020, width: 1594, height: 40, align: 'left', fontSize: 22 },
+    accentLine: { left: 80, top: 1000, width: 200 },
+    textColorLight: false,
+  } as CoverLayout,
+  overview: {
+    heading: { left: 80, top: 50 },
+    priceBlock: { left: 80, top: 130, width: 800 },
+    statsRow: { left: 80, top: 175, width: 800 },
+    introText: { left: 80, top: 230, width: 800, height: 120 },
+    features: { left: 960, top: 130, width: 714, height: 250 },
+    photos: [{ left: 80, top: 400, width: 800, height: 500 }, { left: 960, top: 400, width: 714, height: 240 }, { left: 960, top: 660, width: 714, height: 240 }],
+  } as OverviewLayout,
+  situation: {
+    heading: { left: 80, top: 50 },
+    textBlocks: [{ left: 80, top: 140, width: 800, height: 500 }, { left: 80, top: 700, width: 800, height: 440 }],
+    photos: [{ left: 960, top: 50, width: 714, height: 1090 }],
+  } as ContentLayout,
+  accom1: {
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 80, top: 120, width: 800, height: 500 }],
+    photos: [{ left: 960, top: 30, width: 714, height: 580 }, { left: 80, top: 650, width: 800, height: 490 }, { left: 960, top: 650, width: 714, height: 490 }],
+  } as ContentLayout,
+  accom2: {
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 960, top: 120, width: 714, height: 500 }],
+    photos: [{ left: 80, top: 30, width: 840, height: 580 }, { left: 80, top: 650, width: 550, height: 490 }, { left: 650, top: 650, width: 550, height: 490 }, { left: 1220, top: 650, width: 454, height: 490 }],
+  } as ContentLayout,
+  outside: {
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 80, top: 120, width: 800, height: 400 }],
+    photos: [{ left: 960, top: 30, width: 714, height: 500 }, { left: 80, top: 560, width: 1594, height: 580 }],
+  } as ContentLayout,
+  details: {
+    heading: { left: 80, top: 50 },
+    leftColumn: { left: 80, top: 140, width: 800, height: 600 },
+    rightColumn: { left: 960, top: 140, width: 714, height: 400 },
+    legalText: { left: 80, top: 1040, width: 1594, height: 120 },
+  } as DetailsLayout,
+  location: {
+    photo: { left: 0, top: 0, width: 1754, height: 900 },
+    strip: { left: 0, top: 900, width: 1754, height: 340 },
+    addressText: { left: 80, top: 930, width: 800 },
+    agentText: { left: 80, top: 990, width: 800 },
+  } as LocationLayout,
+};
+
+// ──────────────────────────────────────
+// 12. PANORAMIC STRIP
+// Wide panoramic photos, thin text strips between
+// ──────────────────────────────────────
+
+const panoramic = {
+  cover: {
+    heroImage: { left: 0, top: 150, width: 1754, height: 700 },
+    overlayRect: { left: 0, top: 0, width: 1754, height: 150, fill: '__primary__' },
+    addressText: { left: 120, top: 30, width: 1514, height: 70, align: 'left', fontSize: 44 },
+    priceLine: { left: 120, top: 100, width: 1514, height: 30, align: 'left', fontSize: 20 },
+    panelRect: { left: 0, top: 850, width: 1754, height: 390, fill: '__background__' },
+    textColorLight: true,
+  } as CoverLayout,
+  overview: {
+    heading: { left: 80, top: 40 },
+    priceBlock: { left: 80, top: 120, width: 600 },
+    statsRow: { left: 80, top: 165, width: 600 },
+    introText: { left: 80, top: 220, width: 1594, height: 100 },
+    features: { left: 80, top: 340, width: 1594, height: 120 },
+    photos: [{ left: 0, top: 490, width: 1754, height: 350 }, { left: 0, top: 860, width: 877, height: 340 }, { left: 877, top: 860, width: 877, height: 340 }],
+  } as OverviewLayout,
+  situation: {
+    heading: { left: 80, top: 40 },
+    textBlocks: [{ left: 80, top: 130, width: 1594, height: 300 }],
+    photos: [{ left: 0, top: 460, width: 1754, height: 380 }, { left: 0, top: 860, width: 1754, height: 340 }],
+  } as ContentLayout,
+  accom1: {
+    heading: { left: 80, top: 20 },
+    textBlocks: [{ left: 80, top: 480, width: 1594, height: 250 }],
+    photos: [{ left: 0, top: 70, width: 1754, height: 390 }, { left: 0, top: 760, width: 877, height: 440 }, { left: 877, top: 760, width: 877, height: 440 }],
+  } as ContentLayout,
+  accom2: {
+    heading: { left: 80, top: 20 },
+    textBlocks: [{ left: 80, top: 480, width: 1594, height: 250 }],
+    photos: [{ left: 0, top: 70, width: 585, height: 390 }, { left: 585, top: 70, width: 585, height: 390 }, { left: 1170, top: 70, width: 584, height: 390 }, { left: 0, top: 760, width: 1754, height: 440 }],
+  } as ContentLayout,
+  outside: {
+    heading: { left: 80, top: 20 },
+    textBlocks: [{ left: 80, top: 480, width: 1594, height: 300 }],
+    photos: [{ left: 0, top: 70, width: 1754, height: 390 }, { left: 0, top: 810, width: 1754, height: 390 }],
+  } as ContentLayout,
+  details: {
+    heading: { left: 80, top: 40 },
+    leftColumn: { left: 80, top: 130, width: 760, height: 600 },
+    rightColumn: { left: 920, top: 130, width: 754, height: 400 },
+    legalText: { left: 80, top: 1040, width: 1594, height: 120 },
+  } as DetailsLayout,
+  location: {
+    photo: { left: 0, top: 0, width: 1754, height: 700 },
+    strip: { left: 0, top: 700, width: 1754, height: 540 },
+    addressText: { left: 80, top: 740, width: 800 },
+    agentText: { left: 80, top: 800, width: 800 },
+  } as LocationLayout,
+};
+
+// ──────────────────────────────────────
+// 13. CARD STACK
+// Content on white cards with shadows on grey background
+// ──────────────────────────────────────
+
+const cardStack = {
+  cover: {
+    heroImage: { left: 60, top: 60, width: 1634, height: 800 },
+    addressText: { left: 60, top: 900, width: 1634, height: 70, align: 'left', fontSize: 44 },
+    priceLine: { left: 60, top: 990, width: 1634, height: 40, align: 'left', fontSize: 22 },
+    accentLine: { left: 60, top: 975, width: 200 },
+    textColorLight: false,
+  } as CoverLayout,
+  overview: {
+    heading: { left: 100, top: 60 },
+    priceBlock: { left: 100, top: 140, width: 650 },
+    statsRow: { left: 100, top: 185, width: 650 },
+    introText: { left: 100, top: 240, width: 650, height: 180 },
+    features: { left: 100, top: 450, width: 650, height: 300 },
+    photos: [{ left: 820, top: 60, width: 854, height: 500 }, { left: 100, top: 800, width: 760, height: 360 }, { left: 900, top: 800, width: 774, height: 360 }],
+  } as OverviewLayout,
+  situation: {
+    heading: { left: 100, top: 60 },
+    textBlocks: [{ left: 100, top: 150, width: 700, height: 600 }],
+    photos: [{ left: 860, top: 60, width: 814, height: 700 }, { left: 100, top: 800, width: 1574, height: 360 }],
+  } as ContentLayout,
+  accom1: {
+    heading: { left: 100, top: 30 },
+    textBlocks: [{ left: 100, top: 580, width: 1574, height: 560 }],
+    photos: [{ left: 100, top: 80, width: 760, height: 470 }, { left: 900, top: 80, width: 774, height: 470 }],
+  } as ContentLayout,
+  accom2: {
+    heading: { left: 100, top: 30 },
+    textBlocks: [{ left: 100, top: 580, width: 1574, height: 560 }],
+    photos: [{ left: 100, top: 80, width: 500, height: 470 }, { left: 620, top: 80, width: 500, height: 470 }, { left: 1140, top: 80, width: 534, height: 470 }],
+  } as ContentLayout,
+  outside: {
+    heading: { left: 100, top: 30 },
+    textBlocks: [{ left: 100, top: 660, width: 1574, height: 480 }],
+    photos: [{ left: 60, top: 80, width: 1634, height: 550 }],
+  } as ContentLayout,
+  details: {
+    heading: { left: 100, top: 60 },
+    leftColumn: { left: 100, top: 150, width: 700, height: 600 },
+    rightColumn: { left: 880, top: 150, width: 794, height: 400 },
+    legalText: { left: 100, top: 1040, width: 1554, height: 120 },
+  } as DetailsLayout,
+  location: {
+    photo: { left: 60, top: 60, width: 1634, height: 860 },
+    strip: { left: 60, top: 950, width: 1634, height: 230 },
+    addressText: { left: 100, top: 980, width: 800 },
+    agentText: { left: 100, top: 1040, width: 800 },
+  } as LocationLayout,
+};
+
+// ──────────────────────────────────────
+// 14. CORNER ACCENT
+// Bold colour block in one corner, content elsewhere
+// ──────────────────────────────────────
+
+const cornerAccent = {
+  cover: {
+    heroImage: { left: 300, top: 0, width: 1454, height: 1240 },
+    panelRect: { left: 0, top: 0, width: 300, height: 1240, fill: '__primary__' },
+    addressText: { left: 30, top: 350, width: 250, height: 200, align: 'left', fontSize: 32 },
+    priceLine: { left: 30, top: 600, width: 250, height: 40, align: 'left', fontSize: 18 },
+    accentLine: { left: 30, top: 580, width: 100 },
+    textColorLight: true,
+  } as CoverLayout,
+  overview: {
+    heading: { left: 80, top: 60 },
+    priceBlock: { left: 80, top: 140, width: 600 },
+    statsRow: { left: 80, top: 185, width: 600 },
+    introText: { left: 80, top: 240, width: 600, height: 200 },
+    features: { left: 80, top: 470, width: 600, height: 350 },
+    photos: [{ left: 740, top: 60, width: 934, height: 560 }, { left: 740, top: 650, width: 460, height: 490 }, { left: 1220, top: 650, width: 454, height: 490 }],
+  } as OverviewLayout,
+  situation: {
+    heading: { left: 80, top: 60 },
+    textBlocks: [{ left: 80, top: 150, width: 650, height: 600 }],
+    photos: [{ left: 780, top: 60, width: 894, height: 700 }, { left: 80, top: 800, width: 1594, height: 340 }],
+  } as ContentLayout,
+  accom1: {
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 80, top: 600, width: 1594, height: 540 }],
+    photos: [{ left: 80, top: 80, width: 1054, height: 490 }, { left: 1154, top: 80, width: 520, height: 490 }],
+  } as ContentLayout,
+  accom2: {
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 80, top: 600, width: 1594, height: 540 }],
+    photos: [{ left: 80, top: 80, width: 520, height: 490 }, { left: 620, top: 80, width: 520, height: 490 }, { left: 1160, top: 80, width: 514, height: 490 }],
+  } as ContentLayout,
+  outside: {
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 80, top: 650, width: 1594, height: 490 }],
+    photos: [{ left: 0, top: 70, width: 1754, height: 550 }],
+  } as ContentLayout,
+  details: {
+    heading: { left: 80, top: 60 },
+    leftColumn: { left: 80, top: 150, width: 760, height: 600 },
+    rightColumn: { left: 920, top: 150, width: 754, height: 400 },
+    legalText: { left: 80, top: 1040, width: 1594, height: 120 },
+  } as DetailsLayout,
+  location: {
+    photo: { left: 300, top: 0, width: 1454, height: 1240 },
+    addressText: { left: 30, top: 400, width: 250 },
+    agentText: { left: 30, top: 470, width: 250 },
+  } as LocationLayout,
+};
+
+// ──────────────────────────────────────
 // EXPORTS - lookup by variant
 // ──────────────────────────────────────
 
@@ -532,6 +872,12 @@ const ALL = {
   'horizontal-bands': bands,
   'framed-gallery': framed,
   'sidebar-panel': sidebar,
+  'dark-luxury': darkLuxury,
+  'photo-mosaic': mosaic,
+  'classic-two-column': twoColumn,
+  'panoramic-strip': panoramic,
+  'card-stack': cardStack,
+  'corner-accent': cornerAccent,
 };
 
 export function getLayout(variant: LayoutVariant) {

@@ -149,6 +149,16 @@ function decorations(t: BrochureTemplate, pageNum: number, pageTitle: string): {
     after.push(line(`grid_h2_${pageNum}`, 0, 816, W, gridColor, 2));
   }
 
+  if (v === 'corner-accent') {
+    // Bold colour block on left edge
+    before.push(rect(`corner_block_${pageNum}`, 0, 0, pageNum === 0 ? 300 : 12, H, t.colors.primary));
+  }
+
+  if (v === 'panoramic-strip' && pageNum === 0) {
+    // Top colour band on cover
+    before.push(rect('pano_top_band', 0, 0, W, 150, t.colors.primary));
+  }
+
   // Standard footer/top bar for layouts that use them
   if (v !== 'full-bleed-cinematic' && v !== 'sidebar-panel' && v !== 'horizontal-bands') {
     if (t.style.topBarStyle === 'solid' && pageNum > 0) {
