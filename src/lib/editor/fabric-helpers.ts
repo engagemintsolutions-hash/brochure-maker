@@ -18,7 +18,17 @@ export async function loadCanvasFromJson(
 }
 
 export function getCanvasJson(canvas: fabric.Canvas): object {
-  return canvas.toJSON();
+  const json = canvas.toJSON() as { objects: Record<string, unknown>[] };
+  // Preserve custom properties that Fabric strips by default
+  const objects = canvas.getObjects();
+  json.objects.forEach((obj, i) => {
+    const src = objects[i] as unknown as Record<string, unknown>;
+    if (src.name) obj.name = src.name;
+    if (src._imageUrl) obj._imageUrl = src._imageUrl;
+    if (src._targetWidth) obj._targetWidth = src._targetWidth;
+    if (src._targetHeight) obj._targetHeight = src._targetHeight;
+  });
+  return json;
 }
 
 export function updateAccentColor(

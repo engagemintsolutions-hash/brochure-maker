@@ -5,6 +5,7 @@ import * as fabric from 'fabric';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { useEditorStore } from '@/stores/editor-store';
 import { fabricRef } from './canvas-page-ref';
+import { getCanvasJson } from '@/lib/editor/fabric-helpers';
 import { PhotoLibrary } from './photo-library';
 
 export function PropertiesPanel() {
@@ -41,7 +42,7 @@ export function PropertiesPanel() {
 
         // Save the change
         const store = useEditorStore.getState();
-        const json = canvas?.toJSON();
+        const json = canvas ? getCanvasJson(canvas) : null;
         if (json) {
           store.pushUndo();
           store.updatePageCanvas(store.activePageIndex, json);

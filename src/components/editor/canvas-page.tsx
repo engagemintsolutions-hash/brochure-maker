@@ -54,13 +54,13 @@ export function CanvasPage() {
         const imagePromises: Promise<void>[] = [];
 
         for (const obj of objects) {
-          const fabricObj = obj as fabric.FabricObject & { _imageUrl?: string; name?: string };
+          const fabricObj = obj as fabric.FabricObject & { _imageUrl?: string; _targetWidth?: number; _targetHeight?: number; name?: string };
           if (fabricObj.type === 'Image' && fabricObj._imageUrl) {
             const imageUrl = fabricObj._imageUrl;
             const targetLeft = fabricObj.left || 0;
             const targetTop = fabricObj.top || 0;
-            const targetWidth = fabricObj.width || 200;
-            const targetHeight = fabricObj.height || 200;
+            const targetWidth = fabricObj._targetWidth || fabricObj.width || 200;
+            const targetHeight = fabricObj._targetHeight || fabricObj.height || 200;
             const targetName = fabricObj.name || '';
             const isEditable = fabricObj.selectable !== false;
 
@@ -80,6 +80,16 @@ export function CanvasPage() {
                   name: targetName,
                   selectable: isEditable,
                   hasControls: isEditable,
+                  _imageUrl: imageUrl,
+                  _targetWidth: targetWidth,
+                  _targetHeight: targetHeight,
+                } as Record<string, unknown>);
+
+                // Clip to frame bounds so image doesn't overflow
+                img.clipPath = new fabric.Rect({
+                  width: targetWidth / scale,
+                  height: targetHeight / scale,
+                  absolutePositioned: false,
                 });
 
                 canvas.remove(fabricObj);

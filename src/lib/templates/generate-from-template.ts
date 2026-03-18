@@ -37,7 +37,8 @@ function rect(name: string, left: number, top: number, width: number, height: nu
 function image(name: string, left: number, top: number, width: number, height: number, url: string) {
   return {
     type: 'Image', name, left, top, width, height,
-    src: url, _imageUrl: url, crossOrigin: 'anonymous',
+    src: url, _imageUrl: url, _targetWidth: width, _targetHeight: height,
+    crossOrigin: 'anonymous',
     selectable: true, evented: true, hasControls: true,
     lockMovementX: false, lockMovementY: false,
   };
@@ -133,9 +134,18 @@ function decorations(t: BrochureTemplate, pageNum: number, pageTitle: string): {
     after.push(rect('accent_strip_cover', 0, 900, W, 12, t.colors.accent));
   }
 
-  if (v === 'split-screen' && pageNum > 0 && pageNum < 7) {
-    // Vertical divider
+  if (v === 'split-screen' && pageNum < 7) {
+    // Vertical divider (including cover)
     after.push(rect(`split_divider_${pageNum}`, 873, 0, 4, H, t.colors.accent));
+  }
+
+  if (v === 'swiss-grid') {
+    // Visible grid lines
+    const gridColor = 'rgba(0,0,0,0.08)';
+    after.push(rect(`grid_v1_${pageNum}`, 595, 0, 1, H, gridColor));
+    after.push(rect(`grid_v2_${pageNum}`, 1160, 0, 1, H, gridColor));
+    after.push(line(`grid_h1_${pageNum}`, 0, 423, W, gridColor, 1));
+    after.push(line(`grid_h2_${pageNum}`, 0, 816, W, gridColor, 1));
   }
 
   // Standard footer/top bar for layouts that use them
@@ -181,6 +191,10 @@ function coverPage(t: BrochureTemplate, property: PropertyDetails, photos: Photo
 
   // Overlay
   if (cl.overlayRect) {
+    // Add gradient fade above the overlay for cinematic
+    if (t.layoutVariant === 'full-bleed-cinematic') {
+      objects.push(rect('cover_overlay_fade', cl.overlayRect.left, cl.overlayRect.top - 100, cl.overlayRect.width, 100, 'rgba(0,0,0,0.25)'));
+    }
     objects.push(rect('cover_overlay', cl.overlayRect.left, cl.overlayRect.top, cl.overlayRect.width, cl.overlayRect.height, resolveFill(cl.overlayRect.fill, t)));
   }
 
