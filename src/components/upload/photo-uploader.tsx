@@ -36,7 +36,7 @@ export function PhotoUploader({ onUpload, currentCount, isUploading }: PhotoUplo
       {...getRootProps()}
       className={`
         border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors
-        ${isDragActive ? 'border-[var(--accent)] bg-red-50' : 'border-gray-300 hover:border-gray-400'}
+        ${isDragActive ? 'border-[var(--accent)] bg-[var(--ivory)]' : 'border-gray-300 hover:border-gray-400'}
         ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
       `}
     >

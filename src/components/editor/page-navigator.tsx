@@ -32,7 +32,7 @@ export function PageNavigator() {
               <div
                 className={`
                   w-full aspect-[1754/1240] rounded bg-gray-200 mb-1.5 flex items-center justify-center text-xs text-gray-400
-                  ${activePageIndex === index ? 'bg-red-50' : ''}
+                  ${activePageIndex === index ? 'bg-[var(--ivory)]' : ''}
                 `}
               >
                 {index + 1}

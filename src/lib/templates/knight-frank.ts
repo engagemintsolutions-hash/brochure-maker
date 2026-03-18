@@ -17,7 +17,7 @@ export function generateBrochureTemplate(
   property: PropertyDetails,
   photos: PhotoAnalysis[],
   text: GeneratedText,
-  accentColor: string = '#D50032',
+  accentColor: string = '#4A1420',
 ): BrochurePage[] {
   const assignments = mapPhotosToPages(photos);
 
