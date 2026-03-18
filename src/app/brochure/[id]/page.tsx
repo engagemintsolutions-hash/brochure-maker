@@ -29,7 +29,7 @@ export default function BrochureEditorPage() {
           // Generate template pages if not already present
           let brochurePages = data.pages;
           if (!brochurePages || brochurePages.length === 0) {
-            const template = getTemplateById(data.templateId || 'kf-residential');
+            const template = getTemplateById(data.templateId || 'editorial-magazine');
             if (template) {
               brochurePages = generateFromTemplate(
                 template,
