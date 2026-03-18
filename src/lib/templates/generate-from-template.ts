@@ -140,12 +140,12 @@ function decorations(t: BrochureTemplate, pageNum: number, pageTitle: string): {
   }
 
   if (v === 'swiss-grid') {
-    // Visible grid lines
-    const gridColor = 'rgba(0,0,0,0.08)';
-    after.push(rect(`grid_v1_${pageNum}`, 595, 0, 1, H, gridColor));
-    after.push(rect(`grid_v2_${pageNum}`, 1160, 0, 1, H, gridColor));
-    after.push(line(`grid_h1_${pageNum}`, 0, 423, W, gridColor, 1));
-    after.push(line(`grid_h2_${pageNum}`, 0, 816, W, gridColor, 1));
+    // Visible grid lines - darker so they're clearly visible
+    const gridColor = 'rgba(0,0,0,0.12)';
+    after.push(rect(`grid_v1_${pageNum}`, 595, 0, 2, H, gridColor));
+    after.push(rect(`grid_v2_${pageNum}`, 1160, 0, 2, H, gridColor));
+    after.push(line(`grid_h1_${pageNum}`, 0, 423, W, gridColor, 2));
+    after.push(line(`grid_h2_${pageNum}`, 0, 816, W, gridColor, 2));
   }
 
   // Standard footer/top bar for layouts that use them
@@ -193,7 +193,8 @@ function coverPage(t: BrochureTemplate, property: PropertyDetails, photos: Photo
   if (cl.overlayRect) {
     // Add gradient fade above the overlay for cinematic
     if (t.layoutVariant === 'full-bleed-cinematic') {
-      objects.push(rect('cover_overlay_fade', cl.overlayRect.left, cl.overlayRect.top - 100, cl.overlayRect.width, 100, 'rgba(0,0,0,0.25)'));
+      objects.push(rect('cover_overlay_fade2', cl.overlayRect.left, cl.overlayRect.top - 200, cl.overlayRect.width, 100, 'rgba(0,0,0,0.1)'));
+      objects.push(rect('cover_overlay_fade', cl.overlayRect.left, cl.overlayRect.top - 100, cl.overlayRect.width, 100, 'rgba(0,0,0,0.3)'));
     }
     objects.push(rect('cover_overlay', cl.overlayRect.left, cl.overlayRect.top, cl.overlayRect.width, cl.overlayRect.height, resolveFill(cl.overlayRect.fill, t)));
   }

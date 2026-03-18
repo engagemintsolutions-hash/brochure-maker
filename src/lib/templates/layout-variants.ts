@@ -68,10 +68,10 @@ export interface LocationLayout {
 const cinematic = {
   cover: {
     heroImage: { left: 0, top: 0, width: 1754, height: 1240 },
-    overlayRect: { left: 0, top: 900, width: 1754, height: 340, fill: 'rgba(0,0,0,0.55)' },
-    addressText: { left: 200, top: 960, width: 1354, height: 70, align: 'center', fontSize: 48 },
-    priceLine: { left: 200, top: 1060, width: 1354, height: 40, align: 'center', fontSize: 24 },
-    accentLine: { left: 777, top: 1040, width: 200 },
+    overlayRect: { left: 0, top: 850, width: 1754, height: 390, fill: 'rgba(0,0,0,0.6)' },
+    addressText: { left: 250, top: 910, width: 1254, height: 70, align: 'center', fontSize: 52 },
+    priceLine: { left: 250, top: 1020, width: 1254, height: 40, align: 'center', fontSize: 26 },
+    accentLine: { left: 727, top: 995, width: 300 },
     textColorLight: true,
   } as CoverLayout,
   overview: {
@@ -131,11 +131,11 @@ const cell = (col: number, row: number, cw = 1, ch = 1): Pos => ({
 const swissGrid = {
   cover: {
     heroImage: cell(0, 0, 2, 2),
-    panelRect: { ...cell(2, 0, 1, 1), fill: 'rgba(0,0,0,0.08)' },
-    addressText: { left: 1190, top: 860, width: 525, height: 70, align: 'left', fontSize: 36 },
-    priceLine: { left: 1190, top: 950, width: 525, height: 40, align: 'left', fontSize: 20 },
-    accentLine: { left: 1190, top: 930, width: 200 },
-    textColorLight: false,
+    panelRect: { left: 1170, top: 40, width: 545, height: 766, fill: '__primary__' },
+    addressText: { left: 1200, top: 200, width: 485, height: 70, align: 'left', fontSize: 32 },
+    priceLine: { left: 1200, top: 300, width: 485, height: 40, align: 'left', fontSize: 18 },
+    accentLine: { left: 1200, top: 280, width: 150 },
+    textColorLight: true,
   } as CoverLayout,
   overview: {
     heading: { left: 40, top: 50 },
@@ -185,10 +185,10 @@ const swissGrid = {
 
 const kinfolk = {
   cover: {
-    heroImage: { left: 477, top: 80, width: 800, height: 550 },
-    addressText: { left: 477, top: 700, width: 800, height: 60, align: 'center', fontSize: 36 },
-    priceLine: { left: 477, top: 790, width: 800, height: 35, align: 'center', fontSize: 18 },
-    accentLine: { left: 777, top: 770, width: 200 },
+    heroImage: { left: 377, top: 60, width: 1000, height: 620 },
+    addressText: { left: 377, top: 740, width: 1000, height: 60, align: 'center', fontSize: 38 },
+    priceLine: { left: 377, top: 840, width: 1000, height: 35, align: 'center', fontSize: 18 },
+    accentLine: { left: 827, top: 815, width: 100 },
     textColorLight: false,
   } as CoverLayout,
   overview: {
@@ -243,9 +243,9 @@ const splitScreen = {
   cover: {
     heroImage: { left: 0, top: 0, width: L, height: 1240 },
     panelRect: { left: L, top: 0, width: L, height: 1240, fill: '__background__' },
-    addressText: { left: 937, top: 420, width: 757, height: 70, align: 'left', fontSize: 48 },
-    priceLine: { left: 937, top: 540, width: 757, height: 40, align: 'left', fontSize: 24 },
-    accentLine: { left: 937, top: 510, width: 200 },
+    addressText: { left: 957, top: 380, width: 717, height: 90, align: 'left', fontSize: 46 },
+    priceLine: { left: 957, top: 520, width: 717, height: 40, align: 'left', fontSize: 22 },
+    accentLine: { left: 957, top: 490, width: 180 },
     textColorLight: false,
   } as CoverLayout,
   overview: {
@@ -298,10 +298,10 @@ const splitScreen = {
 const editorial = {
   cover: {
     heroImage: { left: 0, top: 0, width: 1754, height: 1240 },
-    overlayRect: { left: 0, top: 0, width: 500, height: 1240, fill: 'rgba(0,0,0,0.65)' },
-    addressText: { left: 60, top: 500, width: 420, height: 70, align: 'left', fontSize: 38 },
-    priceLine: { left: 60, top: 600, width: 420, height: 40, align: 'left', fontSize: 22 },
-    accentLine: { left: 60, top: 580, width: 120 },
+    overlayRect: { left: 0, top: 0, width: 520, height: 1240, fill: 'rgba(0,0,0,0.7)' },
+    addressText: { left: 60, top: 440, width: 440, height: 100, align: 'left', fontSize: 42 },
+    priceLine: { left: 60, top: 580, width: 440, height: 40, align: 'left', fontSize: 20 },
+    accentLine: { left: 60, top: 555, width: 80 },
     textColorLight: true,
   } as CoverLayout,
   overview: {
@@ -361,10 +361,10 @@ const editorial = {
 
 const bands = {
   cover: {
-    heroImage: { left: 0, top: 0, width: 1754, height: 900 },
-    overlayRect: { left: 0, top: 912, width: 1754, height: 328, fill: '__primary__' },
-    addressText: { left: 80, top: 950, width: 1594, height: 70, align: 'center', fontSize: 54 },
-    priceLine: { left: 80, top: 1050, width: 1594, height: 40, align: 'center', fontSize: 28 },
+    heroImage: { left: 0, top: 0, width: 1754, height: 840 },
+    overlayRect: { left: 0, top: 855, width: 1754, height: 385, fill: '__primary__' },
+    addressText: { left: 120, top: 895, width: 1514, height: 70, align: 'center', fontSize: 50 },
+    priceLine: { left: 120, top: 1000, width: 1514, height: 40, align: 'center', fontSize: 24 },
     textColorLight: true,
   } as CoverLayout,
   overview: {
@@ -472,9 +472,10 @@ const framed = {
 const sidebar = {
   cover: {
     heroImage: { left: 250, top: 0, width: 1504, height: 1240 },
-    overlayRect: { left: 250, top: 840, width: 800, height: 400, fill: 'rgba(0,0,0,0.5)' },
-    addressText: { left: 310, top: 880, width: 700, height: 70, align: 'left', fontSize: 44 },
-    priceLine: { left: 310, top: 980, width: 700, height: 40, align: 'left', fontSize: 24 },
+    overlayRect: { left: 250, top: 800, width: 1504, height: 440, fill: 'rgba(0,0,0,0.55)' },
+    addressText: { left: 320, top: 860, width: 900, height: 70, align: 'left', fontSize: 46 },
+    priceLine: { left: 320, top: 970, width: 900, height: 40, align: 'left', fontSize: 22 },
+    accentLine: { left: 320, top: 945, width: 150 },
     textColorLight: true,
   } as CoverLayout,
   overview: {
