@@ -5,16 +5,20 @@
   --foreground: #1A1A1A;
   --accent: #4A1420;
   --accent-dark: #3a0f18;
+  --gold: #A89863;
+  --ivory: #f9f7f3;
   --dark-gray: #4A4A4A;
   --mid-gray: #8C8C8C;
   --light-gray: #E5E5E5;
-  --off-white: #F7F7F7;
+  --off-white: #f9f7f3;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
+  --color-gold: var(--gold);
+  --color-ivory: var(--ivory);
   --color-dark-gray: var(--dark-gray);
   --color-mid-gray: var(--mid-gray);
   --color-light-gray: var(--light-gray);
