@@ -55,7 +55,7 @@ export function PropertiesPanel() {
 
   if (!selectedObjectId) {
     return (
-      <div className="w-64 bg-white border-l border-gray-200 p-4 flex-shrink-0">
+      <div data-testid="properties-panel" className="w-64 bg-white border-l border-gray-200 p-4 flex-shrink-0">
         <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
           Properties
         </h3>
@@ -71,7 +71,7 @@ export function PropertiesPanel() {
   }
 
   return (
-    <div className="w-64 bg-white border-l border-gray-200 p-4 flex-shrink-0 overflow-y-auto">
+    <div data-testid="properties-panel" className="w-64 bg-white border-l border-gray-200 p-4 flex-shrink-0 overflow-y-auto">
       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
         Properties
       </h3>
@@ -184,7 +184,7 @@ export function PropertiesPanel() {
             <button
               onClick={handleRewrite}
               disabled={!rewriteInstruction || isRewriting}
-              className="w-full mt-2 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm bg-[var(--accent)] text-white rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full mt-2 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm bg-[var(--accent)] text-white rounded hover:bg-[var(--accent-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isRewriting ? (
                 <>

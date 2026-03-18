@@ -89,7 +89,7 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
 
             <button
               onClick={handleExport}
-              className="w-full flex items-center justify-center gap-2 bg-[var(--accent)] text-white py-2.5 rounded-md font-medium hover:bg-red-700 transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-[var(--accent)] text-white py-2.5 rounded-md font-medium hover:bg-[var(--accent-dark)] transition-colors"
             >
               <Download className="w-4 h-4" />
               Generate PDF

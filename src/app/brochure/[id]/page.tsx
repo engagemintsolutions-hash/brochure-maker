@@ -5,7 +5,8 @@ import { useParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { CanvasEditor } from '@/components/editor/canvas-editor';
 import { useEditorStore } from '@/stores/editor-store';
-import { generateBrochureTemplate } from '@/lib/templates/knight-frank';
+import { generateFromTemplate } from '@/lib/templates/generate-from-template';
+import { getTemplateById } from '@/lib/templates/template-registry';
 
 export default function BrochureEditorPage() {
   const params = useParams();
@@ -28,12 +29,15 @@ export default function BrochureEditorPage() {
           // Generate template pages if not already present
           let brochurePages = data.pages;
           if (!brochurePages || brochurePages.length === 0) {
-            brochurePages = generateBrochureTemplate(
-              data.propertyDetails,
-              data.photos,
-              data.generatedText,
-              data.accentColor || '#D50032',
-            );
+            const template = getTemplateById(data.templateId || 'kf-residential');
+            if (template) {
+              brochurePages = generateFromTemplate(
+                template,
+                data.propertyDetails,
+                data.photos,
+                data.generatedText,
+              );
+            }
           }
 
           setBrochure(
@@ -41,8 +45,8 @@ export default function BrochureEditorPage() {
             data.propertyDetails,
             data.photos,
             data.generatedText,
-            brochurePages,
-            data.accentColor || '#D50032',
+            brochurePages || [],
+            data.accentColor || '#4A1420',
           );
 
           setIsLoading(false);
@@ -80,7 +84,7 @@ export default function BrochureEditorPage() {
         <p className="text-gray-700 mb-4">{error}</p>
         <a
           href="/brochure/new"
-          className="px-6 py-2.5 bg-[var(--accent)] text-white rounded-md hover:bg-red-700 transition-colors"
+          className="px-6 py-2.5 bg-[var(--accent)] text-white rounded-md hover:bg-[var(--accent-dark)] transition-colors"
         >
           Create New Brochure
         </a>

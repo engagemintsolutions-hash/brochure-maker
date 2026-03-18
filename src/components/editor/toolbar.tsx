@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Undo2, Redo2, ZoomIn, ZoomOut, Save, Download, Loader2 } from 'lucide-react';
 import { useEditorStore } from '@/stores/editor-store';
 import { ExportDialog } from './export-dialog';
@@ -29,6 +30,8 @@ export function Toolbar() {
       <div className="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-4">
         {/* Left: undo/redo */}
         <div className="flex items-center gap-1">
+          <Image src="/doorstep-logo.png" alt="Doorstep" width={100} height={28} className="h-6 w-auto mr-3" />
+          <div className="w-px h-6 bg-gray-200 mr-2" />
           <button
             onClick={undo}
             disabled={undoStack.length === 0}
@@ -105,7 +108,7 @@ export function Toolbar() {
 
           <button
             onClick={() => setShowExport(true)}
-            className="flex items-center gap-1.5 px-4 py-1.5 text-sm bg-[var(--accent)] text-white rounded hover:bg-red-700 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-1.5 text-sm bg-[var(--accent)] text-white rounded hover:bg-[var(--accent-dark)] transition-colors"
           >
             <Download className="w-4 h-4" />
             <span>Export PDF</span>

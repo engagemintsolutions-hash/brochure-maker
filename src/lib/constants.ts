@@ -1,5 +1,5 @@
 export const BRAND = {
-  accent: '#D50032',
+  accent: '#4A1420',
   black: '#1A1A1A',
   darkGray: '#4A4A4A',
   midGray: '#8C8C8C',

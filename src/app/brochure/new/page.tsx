@@ -3,20 +3,23 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { nanoid } from 'nanoid';
+import Image from 'next/image';
 import { ArrowLeft, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import { PhotoUploader } from '@/components/upload/photo-uploader';
 import { PhotoGrid, UploadedPhoto } from '@/components/upload/photo-grid';
 import { PropertyForm } from '@/components/upload/property-form';
+import { TemplateSelector } from '@/components/upload/template-selector';
 import { PropertyDetails } from '@/types/property';
 import { PhotoAnalysis } from '@/types/brochure';
 
-type Step = 'photos' | 'details' | 'generating';
+type Step = 'photos' | 'details' | 'template' | 'generating';
 
 export default function NewBrochurePage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>('photos');
   const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState('kf-residential');
   const [property, setProperty] = useState<Partial<PropertyDetails>>({
     priceQualifier: 'guide_price',
     tenure: 'freehold',
@@ -48,7 +51,6 @@ export default function NewBrochurePage() {
 
       setPhotos((prev) => [...prev, ...newPhotos]);
 
-      // Trigger analysis
       const toAnalyze = newPhotos.map((p: UploadedPhoto) => ({
         id: p.id,
         blobUrl: p.blobUrl,
@@ -105,28 +107,25 @@ export default function NewBrochurePage() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          photos: analyses,
-          property,
-        }),
+        body: JSON.stringify({ photos: analyses, property }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
         setError(data.error || 'Generation failed');
-        setStep('details');
+        setStep('template');
         return;
       }
 
-      // Store in sessionStorage and navigate to editor
       const brochureId = nanoid(10);
       const brochureData = {
         id: brochureId,
         propertyDetails: property,
         photos: analyses,
         generatedText: data.text,
-        accentColor: '#D50032',
+        accentColor: '#4A1420',
+        templateId: selectedTemplate,
       };
 
       sessionStorage.setItem(`brochure-${brochureId}`, JSON.stringify(brochureData));
@@ -134,7 +133,7 @@ export default function NewBrochurePage() {
     } catch (err) {
       console.error(err);
       setError('Failed to generate brochure text. Please try again.');
-      setStep('details');
+      setStep('template');
     }
   };
 
@@ -142,31 +141,38 @@ export default function NewBrochurePage() {
   const analyzingCount = photos.filter((p) => p.analyzing).length;
   const canProceed = photos.length >= 3 && analyzingCount === 0;
 
+  const steps = [
+    { key: 'photos', label: '1. Photos' },
+    { key: 'details', label: '2. Details' },
+    { key: 'template', label: '3. Template' },
+    { key: 'generating', label: '4. Generate' },
+  ];
+
   return (
     <div className="min-h-screen bg-[var(--off-white)]">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-semibold font-[family-name:var(--font-playfair)]">
-            New Brochure
-          </h1>
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Image src="/doorstep-logo.png" alt="Doorstep" width={120} height={34} className="h-8 w-auto" />
+            <div className="h-6 w-px bg-gray-200" />
+            <h1 className="text-lg font-semibold font-[family-name:var(--font-playfair)]">
+              New Brochure
+            </h1>
+          </div>
           <div className="flex items-center gap-2 text-sm text-gray-500">
-            <span className={step === 'photos' ? 'text-[var(--accent)] font-medium' : ''}>
-              1. Photos
-            </span>
-            <span className="text-gray-300">/</span>
-            <span className={step === 'details' ? 'text-[var(--accent)] font-medium' : ''}>
-              2. Details
-            </span>
-            <span className="text-gray-300">/</span>
-            <span className={step === 'generating' ? 'text-[var(--accent)] font-medium' : ''}>
-              3. Generate
-            </span>
+            {steps.map((s, i) => (
+              <span key={s.key}>
+                {i > 0 && <span className="text-gray-300 mx-1">/</span>}
+                <span className={step === s.key ? 'text-[var(--accent)] font-medium' : ''}>
+                  {s.label}
+                </span>
+              </span>
+            ))}
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto px-6 py-8">
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
             {error}
@@ -184,12 +190,7 @@ export default function NewBrochurePage() {
               rooms and features automatically.
             </p>
 
-            <PhotoUploader
-              onUpload={handleUpload}
-              currentCount={photos.length}
-              isUploading={isUploading}
-            />
-
+            <PhotoUploader onUpload={handleUpload} currentCount={photos.length} isUploading={isUploading} />
             <PhotoGrid photos={photos} onRemove={handleRemove} />
 
             {photos.length > 0 && (
@@ -201,7 +202,7 @@ export default function NewBrochurePage() {
                 <button
                   onClick={() => setStep('details')}
                   disabled={!canProceed}
-                  className="flex items-center gap-2 bg-[var(--accent)] text-white px-6 py-2.5 rounded-md font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 bg-[var(--accent)] text-white px-6 py-2.5 rounded-md font-medium hover:bg-[var(--accent-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Next: Property Details
                   <ArrowRight className="w-4 h-4" />
@@ -234,9 +235,40 @@ export default function NewBrochurePage() {
                 Back to Photos
               </button>
               <button
-                onClick={handleGenerate}
+                onClick={() => setStep('template')}
                 disabled={!property.address?.line1 || !property.price}
-                className="flex items-center gap-2 bg-[var(--accent)] text-white px-6 py-2.5 rounded-md font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-2 bg-[var(--accent)] text-white px-6 py-2.5 rounded-md font-medium hover:bg-[var(--accent-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Next: Choose Template
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Template Selection */}
+        {step === 'template' && (
+          <div>
+            <h2 className="text-2xl font-semibold font-[family-name:var(--font-playfair)] mb-2">
+              Choose a Template
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Select a brochure style. You can change colours and edit everything in the editor afterward.
+            </p>
+
+            <TemplateSelector selected={selectedTemplate} onSelect={setSelectedTemplate} />
+
+            <div className="mt-8 flex items-center justify-between">
+              <button
+                onClick={() => setStep('details')}
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Details
+              </button>
+              <button
+                onClick={handleGenerate}
+                className="flex items-center gap-2 bg-[var(--accent)] text-white px-6 py-2.5 rounded-md font-medium hover:bg-[var(--accent-dark)] transition-colors"
               >
                 <Sparkles className="w-4 h-4" />
                 Generate Brochure
@@ -245,7 +277,7 @@ export default function NewBrochurePage() {
           </div>
         )}
 
-        {/* Step 3: Generating */}
+        {/* Step 4: Generating */}
         {step === 'generating' && (
           <div className="flex flex-col items-center justify-center py-24">
             <Loader2 className="w-12 h-12 text-[var(--accent)] animate-spin mb-6" />

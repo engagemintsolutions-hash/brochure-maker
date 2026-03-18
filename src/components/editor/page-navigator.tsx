@@ -9,7 +9,7 @@ export function PageNavigator() {
   const setActivePage = useEditorStore((s) => s.setActivePage);
 
   return (
-    <div className="w-52 bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0">
+    <div data-testid="page-navigator" className="w-52 bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0">
       <div className="p-3">
         <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
           Pages
