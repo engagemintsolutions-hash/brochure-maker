@@ -33,6 +33,22 @@ export function CanvasPage() {
 
     fabricRef.current = canvas;
 
+    // Auto-zoom to fit the available viewport
+    const editorArea = canvasRef.current?.parentElement?.parentElement;
+    if (editorArea) {
+      const availableWidth = editorArea.clientWidth - 80; // padding
+      const availableHeight = editorArea.clientHeight - 80;
+      const fitZoom = Math.min(
+        availableWidth / CANVAS.width,
+        availableHeight / CANVAS.height,
+        1, // never zoom above 100%
+      );
+      const roundedZoom = Math.round(fitZoom * 20) / 20; // round to nearest 5%
+      if (roundedZoom < 1 && roundedZoom > 0.2) {
+        useEditorStore.getState().setZoom(roundedZoom);
+      }
+    }
+
     return () => {
       canvas.dispose();
       fabricRef.current = null;
@@ -68,13 +84,21 @@ export function CanvasPage() {
               .then((img) => {
                 const imgWidth = img.width || 1;
                 const imgHeight = img.height || 1;
-                const scaleX = targetWidth / imgWidth;
-                const scaleY = targetHeight / imgHeight;
-                const scale = Math.max(scaleX, scaleY);
+
+                // Cover-style scaling: fill the frame completely, crop overflow
+                const scaleToFillX = targetWidth / imgWidth;
+                const scaleToFillY = targetHeight / imgHeight;
+                const scale = Math.max(scaleToFillX, scaleToFillY);
+
+                // Centre the image within the frame (offset the excess)
+                const scaledW = imgWidth * scale;
+                const scaledH = imgHeight * scale;
+                const offsetX = (scaledW - targetWidth) / 2;
+                const offsetY = (scaledH - targetHeight) / 2;
 
                 img.set({
-                  left: targetLeft,
-                  top: targetTop,
+                  left: targetLeft - offsetX,
+                  top: targetTop - offsetY,
                   scaleX: scale,
                   scaleY: scale,
                   name: targetName,
@@ -85,11 +109,13 @@ export function CanvasPage() {
                   _targetHeight: targetHeight,
                 } as Record<string, unknown>);
 
-                // Clip to frame bounds so image doesn't overflow
+                // Clip to frame bounds using absolute positioning
                 img.clipPath = new fabric.Rect({
-                  width: targetWidth / scale,
-                  height: targetHeight / scale,
-                  absolutePositioned: false,
+                  left: targetLeft,
+                  top: targetTop,
+                  width: targetWidth,
+                  height: targetHeight,
+                  absolutePositioned: true,
                 });
 
                 canvas.remove(fabricObj);

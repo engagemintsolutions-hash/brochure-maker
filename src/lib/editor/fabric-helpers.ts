@@ -90,9 +90,15 @@ export async function loadImageIntoFrame(
   const scaleY = frameHeight / (img.height || 1);
   const scale = Math.max(scaleX, scaleY);
 
+  // Centre image within frame (cover-style: fill and crop)
+  const scaledW = (img.width || 1) * scale;
+  const scaledH = (img.height || 1) * scale;
+  const offsetX = (scaledW - frameWidth) / 2;
+  const offsetY = (scaledH - frameHeight) / 2;
+
   img.set({
-    left: target.left,
-    top: target.top,
+    left: (target.left || 0) - offsetX,
+    top: (target.top || 0) - offsetY,
     scaleX: scale,
     scaleY: scale,
     name: targetName,
@@ -100,11 +106,13 @@ export async function loadImageIntoFrame(
     hasControls: true,
   });
 
-  // Add clip path to constrain to frame
+  // Clip to frame bounds
   img.clipPath = new fabric.Rect({
-    width: frameWidth / scale,
-    height: frameHeight / scale,
-    absolutePositioned: false,
+    left: target.left || 0,
+    top: target.top || 0,
+    width: frameWidth,
+    height: frameHeight,
+    absolutePositioned: true,
   });
 
   // Replace the placeholder
