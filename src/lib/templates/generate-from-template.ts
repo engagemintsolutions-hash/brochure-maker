@@ -10,6 +10,7 @@ import { PropertyDetails } from '@/types/property';
 import { mapPhotosToPages, PagePhotoAssignment } from '@/lib/photo-mapper';
 import { CANVAS, PAGE_NAMES } from '@/lib/constants';
 import { getLayout, LayoutVariant } from './layout-variants';
+import { buildEpcChart } from './epc-chart';
 
 const W = CANVAS.width;
 const H = CANVAS.height;
@@ -224,6 +225,11 @@ function coverPage(t: BrochureTemplate, property: PropertyDetails, photos: Photo
   objects.push(text('cover_city', cl.priceLine.left, cl.priceLine.top + 90, cl.priceLine.width, 30,
     `${addr.city}${addr.county ? ', ' + addr.county : ''}`, { fontFamily: t.fonts.body, fontSize: 14, fill: subColor, textAlign: cl.priceLine.align || 'center' }));
 
+  // Agent logo on cover
+  if (property.agentLogo) {
+    objects.push(image('cover_logo', W - 280, 30, 200, 70, property.agentLogo));
+  }
+
   objects.push(...after);
 
   const bg = t.layoutVariant === 'split-screen' ? t.colors.background
@@ -328,13 +334,25 @@ function detailsPage(t: BrochureTemplate, property: PropertyDetails): object {
       'Services\nAll mains services are connected.\n\nViewing\nStrictly by appointment through the sole agents.', { ...bs(t), fontSize: 15, lineHeight: 1.8 }));
   }
 
+  // EPC chart
+  if (property.epcRating) {
+    const epcLeft = dl.rightColumn ? dl.rightColumn.left : dl.leftColumn.left + 450;
+    const epcTop = dl.rightColumn ? dl.rightColumn.top + 280 : dl.leftColumn.top + 350;
+    objects.push(...buildEpcChart(property.epcRating, epcLeft, epcTop));
+  }
+
+  // Floor plan
+  if (property.floorPlanUrl) {
+    objects.push(image('details_floorplan', dl.leftColumn.left, dl.legalText.top - 420, dl.leftColumn.width + (dl.rightColumn ? dl.rightColumn.width + 100 : 0), 380, property.floorPlanUrl));
+  }
+
   objects.push(text('details_legal', dl.legalText.left, dl.legalText.top, dl.legalText.width, dl.legalText.height, legal, { fontFamily: t.fonts.body, fontSize: 9, lineHeight: 1.5, fill: t.colors.textLight }));
   objects.push(...after);
 
   return { version: '6.0.0', objects, background: t.colors.background };
 }
 
-function locationPage(t: BrochureTemplate, property: PropertyDetails, photos: PhotoAnalysis[]): object {
+function locationPage(t: BrochureTemplate, property: PropertyDetails, photos: PhotoAnalysis[], qrDataUrl?: string): object {
   const layout = getLayout(t.layoutVariant);
   const ll = layout.location;
   const { before, after } = decorations(t, 7, 'Location');
@@ -354,6 +372,16 @@ function locationPage(t: BrochureTemplate, property: PropertyDetails, photos: Ph
       agentLine, { fontFamily: t.fonts.body, fontSize: 12, fill: t.colors.textLight }));
   }
 
+  // Agent logo on location page
+  if (property.agentLogo) {
+    objects.push(image('location_logo', W - 280, ll.agentText.top - 10, 180, 60, property.agentLogo));
+  }
+
+  // QR code (pre-generated data URL passed in)
+  if (qrDataUrl) {
+    objects.push(image('location_qr', W - 200, ll.addressText.top - 10, 120, 120, qrDataUrl));
+  }
+
   objects.push(...after);
   return { version: '6.0.0', objects, background: t.colors.background };
 }
@@ -367,6 +395,7 @@ export function generateFromTemplate(
   property: PropertyDetails,
   photos: PhotoAnalysis[],
   genText: GeneratedText,
+  qrDataUrl?: string,
 ): BrochurePage[] {
   const assignments = mapPhotosToPages(photos);
   const getPhotos = (i: number) => assignments.find((a: PagePhotoAssignment) => a.pageIndex === i)?.photos || [];
@@ -379,6 +408,6 @@ export function generateFromTemplate(
     { pageNumber: 4, name: PAGE_NAMES[4], canvasJson: contentPage(template, 4, 'Bedrooms & Bathrooms', genText.accommodation2 || '', getPhotos(4), 'accom2') },
     { pageNumber: 5, name: PAGE_NAMES[5], canvasJson: contentPage(template, 5, 'Outside & Garden', genText.outside || '', getPhotos(5), 'outside') },
     { pageNumber: 6, name: PAGE_NAMES[6], canvasJson: detailsPage(template, property) },
-    { pageNumber: 7, name: PAGE_NAMES[7], canvasJson: locationPage(template, property, getPhotos(7)) },
+    { pageNumber: 7, name: PAGE_NAMES[7], canvasJson: locationPage(template, property, getPhotos(7), qrDataUrl) },
   ];
 }

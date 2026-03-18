@@ -31,11 +31,18 @@ export default function BrochureEditorPage() {
           if (!brochurePages || brochurePages.length === 0) {
             const template = getTemplateById(data.templateId || 'editorial-magazine');
             if (template) {
+              // Generate QR code if listing URL provided
+              let qrDataUrl: string | undefined;
+              if (data.propertyDetails?.listingUrl) {
+                const { generateQrDataUrl } = await import('@/lib/qr-generator');
+                qrDataUrl = await generateQrDataUrl(data.propertyDetails.listingUrl);
+              }
               brochurePages = generateFromTemplate(
                 template,
                 data.propertyDetails,
                 data.photos,
                 data.generatedText,
+                qrDataUrl,
               );
             }
           }

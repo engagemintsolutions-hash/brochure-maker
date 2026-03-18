@@ -48,4 +48,6 @@ export interface PropertyDetails {
   agentPhone?: string;
   agentEmail?: string;
   agentLogo?: string;
+  floorPlanUrl?: string;
+  listingUrl?: string;
 }

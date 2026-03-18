@@ -7,6 +7,7 @@ import { useEditorStore } from '@/stores/editor-store';
 import { fabricRef } from './canvas-page-ref';
 import { getCanvasJson } from '@/lib/editor/fabric-helpers';
 import { PhotoLibrary } from './photo-library';
+import { FONT_GROUPS } from '@/lib/font-registry';
 
 export function PropertiesPanel() {
   const selectedObjectId = useEditorStore((s) => s.selectedObjectId);
@@ -97,11 +98,13 @@ export function PropertiesPanel() {
               }}
               className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm"
             >
-              <option value="Inter">Inter</option>
-              <option value="Playfair Display">Playfair Display</option>
-              <option value="Georgia">Georgia</option>
-              <option value="Arial">Arial</option>
-              <option value="Times New Roman">Times New Roman</option>
+              {FONT_GROUPS.map((group) => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.fonts.map((f) => (
+                    <option key={f.value} value={f.value}>{f.name}</option>
+                  ))}
+                </optgroup>
+              ))}
             </select>
           </div>
 
