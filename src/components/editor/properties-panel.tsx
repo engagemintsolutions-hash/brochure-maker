@@ -7,6 +7,7 @@ import { useEditorStore } from '@/stores/editor-store';
 import { fabricRef } from './canvas-page-ref';
 import { getCanvasJson } from '@/lib/editor/fabric-helpers';
 import { PhotoLibrary } from './photo-library';
+import { LayersPanel } from './layers-panel';
 import { FONT_GROUPS } from '@/lib/font-registry';
 
 export function PropertiesPanel() {
@@ -71,6 +72,7 @@ export function PropertiesPanel() {
           <p><strong>Drop</strong> photos from library or desktop</p>
         </div>
         <PhotoLibrary />
+        <LayersPanel />
       </div>
     );
   }

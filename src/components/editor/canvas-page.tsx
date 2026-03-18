@@ -206,6 +206,19 @@ export function CanvasPage() {
       if (e.target) showAlignmentGuides(canvas, e.target);
     };
 
+    // Snap rotation to 45-degree increments
+    const handleRotating = (e: { target?: fabric.FabricObject }) => {
+      if (!e.target) return;
+      const angle = e.target.angle || 0;
+      const snapAngles = [0, 45, 90, 135, 180, 225, 270, 315, 360];
+      for (const snap of snapAngles) {
+        if (Math.abs(angle - snap) < 5) {
+          e.target.set('angle', snap === 360 ? 0 : snap);
+          break;
+        }
+      }
+    };
+
     const handleSelection = (e: { selected: fabric.FabricObject[] }) => {
       if (e.selected && e.selected.length > 0) {
         const name = (e.selected[0] as fabric.FabricObject & { name?: string }).name;
@@ -231,6 +244,7 @@ export function CanvasPage() {
 
     canvas.on('object:modified', handleModified);
     canvas.on('object:moving', handleMoving as never);
+    canvas.on('object:rotating', handleRotating as never);
     canvas.on('selection:created', handleSelection as never);
     canvas.on('selection:updated', handleSelection as never);
     canvas.on('selection:cleared', handleDeselect);
@@ -241,6 +255,7 @@ export function CanvasPage() {
     return () => {
       canvas.off('object:modified', handleModified);
       canvas.off('object:moving', handleMoving);
+      canvas.off('object:rotating', handleRotating);
       canvas.off('selection:created', handleSelection);
       canvas.off('selection:updated', handleSelection);
       canvas.off('selection:cleared', handleDeselect);
@@ -303,6 +318,105 @@ export function CanvasPage() {
           pushUndo();
           saveCurrentPage();
         });
+      }
+
+      // Duplicate (Ctrl+D)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        const active = canvas.getActiveObject();
+        if (active && !((active as fabric.Textbox).isEditing)) {
+          active.clone().then((cloned: fabric.FabricObject) => {
+            cloned.set({ left: (cloned.left || 0) + 20, top: (cloned.top || 0) + 20 });
+            canvas.add(cloned);
+            canvas.setActiveObject(cloned);
+            pushUndo();
+            saveCurrentPage();
+          });
+        }
+      }
+
+      // Select All (Ctrl+A)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+        const active = canvas.getActiveObject();
+        if (!active || !((active as fabric.Textbox).isEditing)) {
+          e.preventDefault();
+          const objs = canvas.getObjects().filter((o: any) => o.selectable !== false && !o._isGuide);
+          if (objs.length > 0) {
+            const sel = new fabric.ActiveSelection(objs, { canvas });
+            canvas.setActiveObject(sel);
+            canvas.requestRenderAll();
+          }
+        }
+      }
+
+      // Bold (Ctrl+B)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        const active = canvas.getActiveObject();
+        if (active && active.type === 'Textbox') {
+          e.preventDefault();
+          const tb = active as fabric.Textbox;
+          tb.set('fontWeight', tb.fontWeight === 'bold' ? 'normal' : 'bold');
+          canvas.requestRenderAll();
+          saveCurrentPage();
+        }
+      }
+
+      // Italic (Ctrl+I)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+        const active = canvas.getActiveObject();
+        if (active && active.type === 'Textbox') {
+          e.preventDefault();
+          const tb = active as fabric.Textbox;
+          tb.set('fontStyle', tb.fontStyle === 'italic' ? 'normal' : 'italic');
+          canvas.requestRenderAll();
+          saveCurrentPage();
+        }
+      }
+
+      // Bring Forward (Ctrl+])
+      if ((e.ctrlKey || e.metaKey) && e.key === ']') {
+        const active = canvas.getActiveObject();
+        if (active) {
+          e.preventDefault();
+          canvas.bringObjectForward(active);
+          canvas.requestRenderAll();
+          pushUndo();
+          saveCurrentPage();
+        }
+      }
+
+      // Send Backward (Ctrl+[)
+      if ((e.ctrlKey || e.metaKey) && e.key === '[') {
+        const active = canvas.getActiveObject();
+        if (active) {
+          e.preventDefault();
+          canvas.sendObjectBackwards(active);
+          canvas.requestRenderAll();
+          pushUndo();
+          saveCurrentPage();
+        }
+      }
+
+      // Arrow key nudge (1px, or 10px with Shift)
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        const active = canvas.getActiveObject();
+        if (active && !((active as fabric.Textbox).isEditing)) {
+          e.preventDefault();
+          const step = e.shiftKey ? 10 : 1;
+          if (e.key === 'ArrowUp') active.set('top', (active.top || 0) - step);
+          if (e.key === 'ArrowDown') active.set('top', (active.top || 0) + step);
+          if (e.key === 'ArrowLeft') active.set('left', (active.left || 0) - step);
+          if (e.key === 'ArrowRight') active.set('left', (active.left || 0) + step);
+          active.setCoords();
+          canvas.requestRenderAll();
+          saveCurrentPage();
+        }
+      }
+
+      // Escape - deselect
+      if (e.key === 'Escape') {
+        canvas.discardActiveObject();
+        canvas.requestRenderAll();
       }
     };
 

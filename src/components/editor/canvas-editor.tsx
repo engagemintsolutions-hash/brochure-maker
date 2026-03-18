@@ -4,6 +4,7 @@ import { Toolbar } from './toolbar';
 import { PageNavigator } from './page-navigator';
 import { CanvasPage } from './canvas-page';
 import { PropertiesPanel } from './properties-panel';
+import { ContextMenu } from './context-menu';
 
 export function CanvasEditor() {
   return (
@@ -16,6 +17,7 @@ export function CanvasEditor() {
         </div>
         <PropertiesPanel />
       </div>
+      <ContextMenu />
     </div>
   );
 }
