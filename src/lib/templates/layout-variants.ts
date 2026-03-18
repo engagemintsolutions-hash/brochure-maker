@@ -262,13 +262,13 @@ const splitScreen = {
     photos: [{ left: 0, top: 0, width: L, height: 1240 }],
   } as ContentLayout,
   accom1: {
-    heading: { left: 60, top: 60 },
-    textBlocks: [{ left: 60, top: 150, width: 757, height: 1000 }],
+    heading: { left: 60, top: 40 },
+    textBlocks: [{ left: 60, top: 130, width: 757, height: 1050 }],
     photos: [{ left: L, top: 0, width: L, height: 1240 }],
   } as ContentLayout,
   accom2: {
-    heading: { left: 937, top: 60 },
-    textBlocks: [{ left: 937, top: 150, width: 757, height: 500 }],
+    heading: { left: 937, top: 40 },
+    textBlocks: [{ left: 937, top: 130, width: 757, height: 1050 }],
     photos: [{ left: 0, top: 0, width: L, height: 620 }, { left: 0, top: 620, width: L, height: 620 }],
   } as ContentLayout,
   outside: {
@@ -322,23 +322,23 @@ const editorial = {
     photos: [{ left: 80, top: 700, width: 1594, height: 440 }],
   } as ContentLayout,
   accom1: {
-    heading: { left: 80, top: 60 },
+    heading: { left: 80, top: 30 },
     textBlocks: [
-      { left: 80, top: 740, width: 490, height: 400 },
-      { left: 610, top: 740, width: 490, height: 400 },
-      { left: 1140, top: 740, width: 490, height: 400 },
+      { left: 80, top: 620, width: 490, height: 520 },
+      { left: 610, top: 620, width: 490, height: 520 },
+      { left: 1140, top: 620, width: 490, height: 520 },
     ],
-    photos: [{ left: 80, top: 120, width: 1594, height: 580 }],
+    photos: [{ left: 80, top: 90, width: 1594, height: 500 }],
   } as ContentLayout,
   accom2: {
-    heading: { left: 80, top: 60 },
-    textBlocks: [{ left: 80, top: 750, width: 490, height: 400 }, { left: 610, top: 750, width: 1020, height: 400 }],
-    photos: [{ left: 80, top: 120, width: 1020, height: 580 }, { left: 1140, top: 120, width: 534, height: 280 }, { left: 1140, top: 420, width: 534, height: 280 }],
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 80, top: 620, width: 490, height: 520 }, { left: 610, top: 620, width: 1020, height: 520 }],
+    photos: [{ left: 80, top: 90, width: 1020, height: 500 }, { left: 1140, top: 90, width: 534, height: 240 }, { left: 1140, top: 350, width: 534, height: 240 }],
   } as ContentLayout,
   outside: {
-    heading: { left: 80, top: 60 },
-    textBlocks: [{ left: 80, top: 700, width: 1594, height: 440 }],
-    photos: [{ left: 0, top: 100, width: 1754, height: 560 }],
+    heading: { left: 80, top: 30 },
+    textBlocks: [{ left: 80, top: 620, width: 1594, height: 520 }],
+    photos: [{ left: 0, top: 80, width: 1754, height: 510 }],
   } as ContentLayout,
   details: {
     heading: { left: 80, top: 60 },
@@ -438,18 +438,18 @@ const framed = {
   } as ContentLayout,
   accom1: {
     heading: { left: 577, top: 100 },
-    textBlocks: [{ left: 577, top: 690, width: 600, height: 380 }],
-    photos: [{ left: 82, top: 160, width: 1590, height: 480 }],
+    textBlocks: [{ left: 200, top: 620, width: 1250, height: 480 }],
+    photos: [{ left: 82, top: 160, width: 1590, height: 420 }],
   } as ContentLayout,
   accom2: {
     heading: { left: 577, top: 100 },
-    textBlocks: [{ left: 577, top: 950, width: 600, height: 200 }],
-    photos: [{ left: 82, top: 160, width: 786, height: 420 }, { left: 888, top: 160, width: 786, height: 420 }, { left: 82, top: 600, width: 1590, height: 300 }],
+    textBlocks: [{ left: 200, top: 620, width: 1250, height: 480 }],
+    photos: [{ left: 82, top: 160, width: 786, height: 400 }, { left: 888, top: 160, width: 786, height: 400 }],
   } as ContentLayout,
   outside: {
     heading: { left: 577, top: 100 },
-    textBlocks: [{ left: 577, top: 810, width: 600, height: 300 }],
-    photos: [{ left: 82, top: 160, width: 1590, height: 600 }],
+    textBlocks: [{ left: 200, top: 720, width: 1250, height: 380 }],
+    photos: [{ left: 82, top: 160, width: 1590, height: 520 }],
   } as ContentLayout,
   details: {
     heading: { left: 577, top: 100 },
