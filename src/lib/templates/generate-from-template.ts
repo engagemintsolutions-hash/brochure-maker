@@ -9,6 +9,12 @@ import { BrochurePage, PhotoAnalysis, GeneratedText } from '@/types/brochure';
 import { PropertyDetails } from '@/types/property';
 import { mapPhotosToPages, PagePhotoAssignment } from '@/lib/photo-mapper';
 import { CANVAS, FONTS, PAGE_NAMES } from '@/lib/constants';
+import {
+  coverLayouts,
+  overviewLayouts,
+  contentLayouts,
+  accommodationLayouts,
+} from './layout-variants';
 
 const W = CANVAS.width;
 const H = CANVAS.height;
@@ -215,93 +221,83 @@ function coverPage(
   const hero = photos[0];
   const addr = property.address;
   const price = formatPrice(property.price, property.priceQualifier);
+  const layout = coverLayouts[t.layoutVariant];
   const objects: object[] = [];
 
-  // Hero image
-  if (hero) objects.push(image('cover_hero', 0, 0, W, H, hero.blobUrl));
-
-  // Overlay
-  if (t.style.coverOverlay === 'dark') {
-    objects.push(rect('cover_overlay', 0, H - 340, W, 340, 'rgba(0,0,0,0.55)'));
-  } else if (t.style.coverOverlay === 'gradient-bottom') {
-    objects.push(rect('cover_overlay', 0, H - 400, W, 400, 'rgba(0,0,0,0.45)'));
-  } else if (t.style.coverOverlay === 'light') {
-    objects.push(rect('cover_overlay', 0, H - 340, W, 340, 'rgba(255,255,255,0.75)'));
+  // Hero image using layout positions
+  if (hero) {
+    objects.push(image('cover_hero', layout.heroImage.left, layout.heroImage.top, layout.heroImage.width, layout.heroImage.height, hero.blobUrl));
   }
 
-  const isLight = t.style.coverOverlay === 'light';
+  // Overlay from layout
+  if (layout.overlayRect) {
+    objects.push(rect('cover_overlay', layout.overlayRect.left, layout.overlayRect.top, layout.overlayRect.width, layout.overlayRect.height, layout.overlayRect.fill));
+  }
+
+  // For split layout, add a coloured panel on the text side
+  if (t.layoutVariant === 'split') {
+    objects.push(rect('cover_panel', 0, 0, W / 2, H, t.colors.background));
+  }
+
+  const isLight = t.style.coverOverlay === 'light' || t.layoutVariant === 'split';
   const textColor = isLight ? t.colors.headingColor : '#FFFFFF';
   const subColor = isLight ? t.colors.textLight : 'rgba(255,255,255,0.8)';
 
-  // Text positioning based on template style
-  let textTop = H - 280;
-  let textAlign = 'center';
-  let textLeft = M;
-
-  if (t.style.coverTextPosition === 'bottom-left') {
-    textAlign = 'left';
-  } else if (t.style.coverTextPosition === 'top-left') {
-    textTop = 80;
-    textAlign = 'left';
-  } else if (t.style.coverTextPosition === 'center') {
-    textTop = H / 2 - 60;
-  }
-
-  // Address
+  // Address using layout positions
   objects.push(
-    text('cover_address', textLeft, textTop, CW, 70, `${addr.line1}${addr.line2 ? ', ' + addr.line2 : ''}`, {
+    text('cover_address', layout.addressText.left, layout.addressText.top, layout.addressText.width, layout.addressText.height,
+      `${addr.line1}${addr.line2 ? ', ' + addr.line2 : ''}`, {
       fontFamily: t.fonts.heading,
-      fontSize: 54,
+      fontSize: layout.addressText.fontSize,
       fontWeight: t.style.headingWeight === '300' ? '300' : '700',
       fill: textColor,
-      textAlign,
+      textAlign: layout.addressText.align,
     }),
   );
 
   // Accent line
-  if (textAlign === 'center') {
-    objects.push(line('cover_line', W / 2 - 227, textTop + 85, 454, t.colors.accent, 2));
-  } else {
-    objects.push(line('cover_line', textLeft, textTop + 85, 300, t.colors.accent, 2));
+  if (layout.accentLine) {
+    objects.push(line('cover_line', layout.accentLine.left, layout.accentLine.top, layout.accentLine.width, t.colors.accent, 2));
   }
 
   // Price
   objects.push(
-    text('cover_price', textLeft, textTop + 100, CW, 40, price, {
+    text('cover_price', layout.priceLine.left, layout.priceLine.top, layout.priceLine.width, layout.priceLine.height, price, {
       fontFamily: t.fonts.body,
-      fontSize: 28,
+      fontSize: layout.priceLine.fontSize,
       fill: textColor,
-      textAlign,
+      textAlign: layout.priceLine.align,
     }),
   );
 
   // Tagline
   if (genText.coverTagline) {
     objects.push(
-      text('cover_tagline', textLeft, textTop + 150, CW, 30, genText.coverTagline, {
+      text('cover_tagline', layout.priceLine.left, layout.priceLine.top + 50, layout.priceLine.width, 30, genText.coverTagline, {
         fontFamily: t.fonts.body,
         fontSize: 16,
         fontStyle: 'italic',
         fill: subColor,
-        textAlign,
+        textAlign: layout.priceLine.align,
       }),
     );
   }
 
   // City
   objects.push(
-    text('cover_city', textLeft, textTop + 190, CW, 30, `${addr.city}${addr.county ? ', ' + addr.county : ''}`, {
+    text('cover_city', layout.priceLine.left, layout.priceLine.top + 90, layout.priceLine.width, 30,
+      `${addr.city}${addr.county ? ', ' + addr.county : ''}`, {
       fontFamily: t.fonts.body,
       fontSize: 14,
       fill: subColor,
-      textAlign,
+      textAlign: layout.priceLine.align,
     }),
   );
 
   return {
     version: '6.0.0',
     objects,
-    background: t.colors.primary,
+    background: t.layoutVariant === 'split' ? t.colors.background : t.colors.primary,
   };
 }
 
@@ -316,29 +312,32 @@ function overviewPage(
   const agentLine = property.agentName
     ? `${property.agentName}  |  ${property.agentPhone || ''}  |  ${property.agentEmail || ''}`
     : '';
+  const layout = overviewLayouts[t.layoutVariant];
 
   const objects: object[] = [
     ...makeTopBar(t, 1),
-    text('overview_heading', M, 50, 700, 50, applyCase('Property Overview', t.style.headingCase), headingStyle(t)),
-    line('overview_divider', M, 110, 600, t.colors.accent, 1),
-    text('overview_price', M, 125, 700, 35, price, {
+    text('overview_heading', layout.heading.left, layout.heading.top, 700, 50, applyCase('Property Overview', t.style.headingCase), headingStyle(t)),
+    line('overview_divider', layout.heading.left, layout.heading.top + 60, 600, t.colors.accent, 1),
+    text('overview_price', layout.priceBlock.left, layout.priceBlock.top, layout.priceBlock.width, 35, price, {
       fontFamily: t.fonts.body, fontSize: 22, fontWeight: '600', fill: t.colors.accent,
     }),
-    text('overview_stats', M, 170, 700, 25, `${property.bedrooms} Bedrooms  |  ${property.bathrooms} Bathrooms  |  ${property.receptions} Receptions${property.sqft ? `  |  ${property.sqft.toLocaleString()} sq ft` : ''}`, {
+    text('overview_stats', layout.statsRow.left, layout.statsRow.top, layout.statsRow.width, 25,
+      `${property.bedrooms} Bedrooms  |  ${property.bathrooms} Bathrooms  |  ${property.receptions} Receptions${property.sqft ? `  |  ${property.sqft.toLocaleString()} sq ft` : ''}`, {
       fontFamily: t.fonts.body, fontSize: 14, fill: t.colors.textLight,
     }),
-    text('overview_intro', M, 220, 700, 80, genText.overviewIntro || '', bodyStyle(t)),
-    text('overview_features', M, 320, 700, 300, features, {
+    text('overview_intro', layout.introText.left, layout.introText.top, layout.introText.width, layout.introText.height, genText.overviewIntro || '', bodyStyle(t)),
+    text('overview_features', layout.features.left, layout.features.top, layout.features.width, layout.features.height, features, {
       ...bodyStyle(t), fontSize: 13, lineHeight: 1.8,
     }),
   ];
 
-  // Photos
-  if (photos[0]) objects.push(image('overview_photo_main', 820, 50, 854, 520, photos[0].blobUrl));
-  if (photos[1]) objects.push(image('overview_photo_2', M, 650, 780, 480, photos[1].blobUrl));
-  if (photos[2]) objects.push(image('overview_photo_3', 900, 650, 780, 480, photos[2].blobUrl));
+  // Photos from layout
+  layout.photos.forEach((photoSlot, i) => {
+    if (photos[i]) {
+      objects.push(image(`overview_photo_${i}`, photoSlot.left, photoSlot.top, photoSlot.width, photoSlot.height, photos[i].blobUrl));
+    }
+  });
 
-  // Agent
   if (agentLine) {
     objects.push(text('overview_agent', M, H - 80, 600, 30, agentLine, {
       fontFamily: t.fonts.body, fontSize: 11, fill: t.colors.textLight,
@@ -355,14 +354,20 @@ function situationPage(
   photos: PhotoAnalysis[],
   genText: GeneratedText,
 ): object {
+  const layout = contentLayouts[t.layoutVariant];
   const objects: object[] = [
     ...makeTopBar(t, 2),
-    text('situation_heading', M, 50, 700, 50, applyCase('The Situation', t.style.headingCase), headingStyle(t)),
-    line('situation_divider', M, 110, 600, t.colors.accent, 1),
-    text('situation_text', M, 140, 760, H - 240, genText.situation || '', bodyStyle(t)),
+    text('situation_heading', layout.heading.left, layout.heading.top, 700, 50, applyCase('The Situation', t.style.headingCase), headingStyle(t)),
+    line('situation_divider', layout.heading.left, layout.heading.top + 60, 600, t.colors.accent, 1),
   ];
 
-  if (photos[0]) objects.push(image('situation_photo', 900, 50, 774, H - 140, photos[0].blobUrl));
+  layout.textBlocks.forEach((tb, i) => {
+    objects.push(text(`situation_text_${i}`, tb.left, tb.top, tb.width, tb.height, i === 0 ? (genText.situation || '') : '', bodyStyle(t)));
+  });
+
+  layout.photos.forEach((ps, i) => {
+    if (photos[i]) objects.push(image(`situation_photo_${i}`, ps.left, ps.top, ps.width, ps.height, photos[i].blobUrl));
+  });
 
   objects.push(...makeFooter(t, 2));
   return { version: '6.0.0', objects, background: t.colors.background };
@@ -373,16 +378,19 @@ function accommodation1Page(
   photos: PhotoAnalysis[],
   genText: GeneratedText,
 ): object {
+  const layout = accommodationLayouts[t.layoutVariant];
   const objects: object[] = [
     ...makeTopBar(t, 3),
-    text('accom1_heading', M, 50, 700, 50, applyCase('The Accommodation', t.style.headingCase), headingStyle(t)),
+    text('accom1_heading', layout.heading.left, layout.heading.top, 700, 50, applyCase('The Accommodation', t.style.headingCase), headingStyle(t)),
   ];
 
-  if (photos[0]) objects.push(image('accom1_hero', M, 120, CW, 520, photos[0].blobUrl));
+  layout.textBlocks.forEach((tb, i) => {
+    objects.push(text(`accom1_text_${i}`, tb.left, tb.top, tb.width, tb.height, i === 0 ? (genText.accommodation1 || '') : '', bodyStyle(t)));
+  });
 
-  objects.push(text('accom1_text', M, 670, 760, 400, genText.accommodation1 || '', bodyStyle(t)));
-
-  if (photos[1]) objects.push(image('accom1_photo2', 900, 670, 774, 420, photos[1].blobUrl));
+  layout.photos.forEach((ps, i) => {
+    if (photos[i]) objects.push(image(`accom1_photo_${i}`, ps.left, ps.top, ps.width, ps.height, photos[i].blobUrl));
+  });
 
   objects.push(...makeFooter(t, 3));
   return { version: '6.0.0', objects, background: t.colors.background };
@@ -393,18 +401,19 @@ function accommodation2Page(
   photos: PhotoAnalysis[],
   genText: GeneratedText,
 ): object {
+  const layout = accommodationLayouts[t.layoutVariant];
   const objects: object[] = [
     ...makeTopBar(t, 4),
-    text('accom2_heading', M, 50, 700, 50, applyCase('Bedrooms & Bathrooms', t.style.headingCase), headingStyle(t)),
+    text('accom2_heading', layout.heading.left, layout.heading.top, 700, 50, applyCase('Bedrooms & Bathrooms', t.style.headingCase), headingStyle(t)),
   ];
 
-  if (photos[0]) objects.push(image('accom2_photo1', M, 120, 820, 500, photos[0].blobUrl));
-  if (photos[1]) objects.push(image('accom2_photo2', 940, 120, 734, 500, photos[1].blobUrl));
+  layout.textBlocks.forEach((tb, i) => {
+    objects.push(text(`accom2_text_${i}`, tb.left, tb.top, tb.width, tb.height, i === 0 ? (genText.accommodation2 || '') : '', bodyStyle(t)));
+  });
 
-  objects.push(text('accom2_text', M, 660, CW, 350, genText.accommodation2 || '', bodyStyle(t)));
-
-  if (photos[2]) objects.push(image('accom2_photo3', M, 900, 500, 240, photos[2].blobUrl));
-  if (photos[3]) objects.push(image('accom2_photo4', 620, 900, 500, 240, photos[3].blobUrl));
+  layout.photos.forEach((ps, i) => {
+    if (photos[i]) objects.push(image(`accom2_photo_${i}`, ps.left, ps.top, ps.width, ps.height, photos[i].blobUrl));
+  });
 
   objects.push(...makeFooter(t, 4));
   return { version: '6.0.0', objects, background: t.colors.background };

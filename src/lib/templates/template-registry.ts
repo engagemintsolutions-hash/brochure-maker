@@ -6,10 +6,13 @@
  * The page-layouts system uses these to generate Fabric.js canvas JSON.
  */
 
+import type { LayoutVariant } from './layout-variants';
+
 export interface BrochureTemplate {
   id: string;
   name: string;
   category: 'traditional-luxury' | 'modern-minimal' | 'editorial' | 'corporate-premium' | 'boutique-artisan' | 'heritage-classic';
+  layoutVariant: LayoutVariant;
   inspiration: string;
   colors: {
     primary: string;
@@ -47,6 +50,7 @@ export const templates: BrochureTemplate[] = [
   // ============================================
   {
     id: 'sir-classic',
+    layoutVariant: 'classic',
     name: "Sotheby's Classic",
     category: 'traditional-luxury',
     inspiration: "Sotheby's International Realty",
@@ -78,6 +82,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'glentree-prestige',
+    layoutVariant: 'classic',
     name: 'Prestige Navy',
     category: 'traditional-luxury',
     inspiration: 'Glentree Estates',
@@ -109,6 +114,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'warm-prestige',
+    layoutVariant: 'split',
     name: 'Warm Prestige',
     category: 'traditional-luxury',
     inspiration: 'Rokstone / SIR',
@@ -140,6 +146,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'dark-luxury',
+    layoutVariant: 'full-bleed',
     name: 'Dark Luxury',
     category: 'traditional-luxury',
     inspiration: 'Ultra-prime market',
@@ -171,6 +178,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'ivory-gold',
+    layoutVariant: 'minimal',
     name: 'Ivory & Gold',
     category: 'traditional-luxury',
     inspiration: 'Premium country estates',
@@ -206,6 +214,7 @@ export const templates: BrochureTemplate[] = [
   // ============================================
   {
     id: 'foxtons-urban',
+    layoutVariant: 'classic',
     name: 'Urban Teal',
     category: 'modern-minimal',
     inspiration: 'Foxtons',
@@ -237,6 +246,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'geometric-grey',
+    layoutVariant: 'minimal',
     name: 'Geometric Grey',
     category: 'modern-minimal',
     inspiration: 'Marsh & Parsons',
@@ -268,6 +278,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'beauchamp-ultra',
+    layoutVariant: 'gallery',
     name: 'Ultra Minimal',
     category: 'modern-minimal',
     inspiration: 'Beauchamp Estates',
@@ -299,6 +310,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'digital-forward',
+    layoutVariant: 'classic',
     name: 'Digital Blue',
     category: 'modern-minimal',
     inspiration: 'The House Partnership',
@@ -330,6 +342,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'monochrome-lux',
+    layoutVariant: 'minimal',
     name: 'Monochrome',
     category: 'modern-minimal',
     inspiration: 'Minimalist luxury',
@@ -365,6 +378,7 @@ export const templates: BrochureTemplate[] = [
   // ============================================
   {
     id: 'dexters-magazine',
+    layoutVariant: 'magazine',
     name: 'Magazine Blue',
     category: 'editorial',
     inspiration: 'Dexters',
@@ -396,6 +410,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'christies-art',
+    layoutVariant: 'magazine',
     name: "Christie's Art",
     category: 'editorial',
     inspiration: "Christie's Real Estate",
@@ -427,6 +442,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'tmh-architecture',
+    layoutVariant: 'gallery',
     name: 'Architecture',
     category: 'editorial',
     inspiration: 'The Modern House',
@@ -458,6 +474,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'lifestyle-editorial',
+    layoutVariant: 'magazine',
     name: 'Lifestyle',
     category: 'editorial',
     inspiration: 'Premium lifestyle magazine',
@@ -489,6 +506,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'design-journal',
+    layoutVariant: 'full-bleed',
     name: 'Design Journal',
     category: 'editorial',
     inspiration: 'Architectural design press',
@@ -524,6 +542,7 @@ export const templates: BrochureTemplate[] = [
   // ============================================
   {
     id: 'kf-residential',
+    layoutVariant: 'classic',
     name: 'Knight Frank Red',
     category: 'corporate-premium',
     inspiration: 'Knight Frank',
@@ -555,6 +574,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'savills-bold',
+    layoutVariant: 'classic',
     name: 'Savills Bold',
     category: 'corporate-premium',
     inspiration: 'Savills',
@@ -586,6 +606,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'chestertons-purple',
+    layoutVariant: 'split',
     name: 'Purple Urban',
     category: 'corporate-premium',
     inspiration: 'Chestertons',
@@ -617,6 +638,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'corporate-green',
+    layoutVariant: 'classic',
     name: 'Corporate Green',
     category: 'corporate-premium',
     inspiration: 'Strutt & Parker / Knight Frank Green',
@@ -648,6 +670,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'corporate-slate',
+    layoutVariant: 'split',
     name: 'Slate & Copper',
     category: 'corporate-premium',
     inspiration: 'Modern corporate property',
@@ -683,6 +706,7 @@ export const templates: BrochureTemplate[] = [
   // ============================================
   {
     id: 'winkworth-illustrated',
+    layoutVariant: 'split',
     name: 'Navy & Gold Cream',
     category: 'boutique-artisan',
     inspiration: 'Winkworth',
@@ -714,6 +738,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'aston-chase-gallery',
+    layoutVariant: 'gallery',
     name: 'Rose Gallery',
     category: 'boutique-artisan',
     inspiration: 'Aston Chase',
@@ -745,6 +770,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'tk-geometric',
+    layoutVariant: 'classic',
     name: 'Orange Geometric',
     category: 'boutique-artisan',
     inspiration: 'TK International',
@@ -776,6 +802,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'artisan-craft',
+    layoutVariant: 'minimal',
     name: 'Artisan Earth',
     category: 'boutique-artisan',
     inspiration: 'Craft-quality boutique agents',
@@ -807,6 +834,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'signature-teal',
+    layoutVariant: 'classic',
     name: 'Signature Teal',
     category: 'boutique-artisan',
     inspiration: 'Independent boutique agents',
@@ -842,6 +870,7 @@ export const templates: BrochureTemplate[] = [
   // ============================================
   {
     id: 'sp-country',
+    layoutVariant: 'classic',
     name: 'Country Green',
     category: 'heritage-classic',
     inspiration: 'Strutt & Parker',
@@ -873,6 +902,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'hamptons-warm',
+    layoutVariant: 'magazine',
     name: 'Hamptons Blue',
     category: 'heritage-classic',
     inspiration: 'Hamptons',
@@ -904,6 +934,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'jackson-stops-estate',
+    layoutVariant: 'classic',
     name: 'Burgundy Estate',
     category: 'heritage-classic',
     inspiration: 'Jackson-Stops',
@@ -935,6 +966,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'jdw-classic',
+    layoutVariant: 'split',
     name: 'Classic Green',
     category: 'heritage-classic',
     inspiration: 'John D Wood & Co.',
@@ -966,6 +998,7 @@ export const templates: BrochureTemplate[] = [
   },
   {
     id: 'country-manor',
+    layoutVariant: 'gallery',
     name: 'Country Manor',
     category: 'heritage-classic',
     inspiration: 'Rural country estates',

@@ -202,8 +202,101 @@ export function CanvasPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [pushUndo, saveCurrentPage]);
 
+  // Handle drag-and-drop from photo library
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const canvas = fabricRef.current;
+    if (!canvas) return;
+
+    // Get image URL from drag data
+    const imageUrl = e.dataTransfer.getData('text/plain');
+
+    // Also handle files dragged from desktop
+    const files = e.dataTransfer.files;
+
+    if (imageUrl && imageUrl.startsWith('http')) {
+      try {
+        const img = await fabric.FabricImage.fromURL(imageUrl, { crossOrigin: 'anonymous' });
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        const x = (e.clientX - rect.left) / zoom;
+        const y = (e.clientY - rect.top) / zoom;
+
+        const maxWidth = 500;
+        const scale = Math.min(maxWidth / (img.width || 1), 1);
+
+        img.set({
+          left: x - ((img.width || 200) * scale) / 2,
+          top: y - ((img.height || 200) * scale) / 2,
+          scaleX: scale,
+          scaleY: scale,
+          selectable: true,
+          hasControls: true,
+          name: `photo_dropped_${Date.now()}`,
+        });
+
+        pushUndo();
+        canvas.add(img);
+        canvas.setActiveObject(img);
+        canvas.renderAll();
+        saveCurrentPage();
+      } catch (err) {
+        console.error('Failed to drop image:', err);
+      }
+    } else if (files.length > 0) {
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith('image/')) continue;
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          const dataUrl = event.target?.result as string;
+          if (!dataUrl) return;
+
+          try {
+            const img = await fabric.FabricImage.fromURL(dataUrl);
+            const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+            const x = (e.clientX - rect.left) / zoom;
+            const y = (e.clientY - rect.top) / zoom;
+
+            const maxWidth = 500;
+            const scale = Math.min(maxWidth / (img.width || 1), 1);
+
+            img.set({
+              left: x,
+              top: y,
+              scaleX: scale,
+              scaleY: scale,
+              selectable: true,
+              hasControls: true,
+              name: `photo_local_${Date.now()}`,
+            });
+
+            pushUndo();
+            canvas.add(img);
+            canvas.setActiveObject(img);
+            canvas.renderAll();
+            saveCurrentPage();
+          } catch (err) {
+            console.error('Failed to load dropped file:', err);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }, [zoom, pushUndo, saveCurrentPage]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  }, []);
+
   return (
-    <div className="flex items-center justify-center p-8 bg-gray-200 min-h-full overflow-auto">
+    <div
+      className="flex items-center justify-center p-8 bg-gray-200 min-h-full overflow-auto"
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+    >
       <div
         className="shadow-2xl"
         style={{

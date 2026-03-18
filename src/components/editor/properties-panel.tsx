@@ -5,6 +5,7 @@ import * as fabric from 'fabric';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { useEditorStore } from '@/stores/editor-store';
 import { fabricRef } from './canvas-page-ref';
+import { PhotoLibrary } from './photo-library';
 
 export function PropertiesPanel() {
   const selectedObjectId = useEditorStore((s) => s.selectedObjectId);
@@ -55,17 +56,19 @@ export function PropertiesPanel() {
 
   if (!selectedObjectId) {
     return (
-      <div data-testid="properties-panel" className="w-64 bg-white border-l border-gray-200 p-4 flex-shrink-0">
+      <div data-testid="properties-panel" className="w-64 bg-white border-l border-gray-200 p-4 flex-shrink-0 overflow-y-auto">
         <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
           Properties
         </h3>
         <p className="text-sm text-gray-400">Select an element on the canvas to edit its properties.</p>
-        <div className="mt-6 text-xs text-gray-400 space-y-2">
+        <div className="mt-4 text-xs text-gray-400 space-y-1.5">
           <p><strong>Double-click</strong> text to edit inline</p>
           <p><strong>Drag</strong> to move elements</p>
           <p><strong>Corners</strong> to resize</p>
           <p><strong>Ctrl+Z</strong> to undo</p>
+          <p><strong>Drop</strong> photos from library or desktop</p>
         </div>
+        <PhotoLibrary />
       </div>
     );
   }
@@ -216,6 +219,8 @@ export function PropertiesPanel() {
           </div>
         </div>
       )}
+
+      <PhotoLibrary />
     </div>
   );
 }
