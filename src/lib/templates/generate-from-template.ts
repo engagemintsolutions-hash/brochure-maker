@@ -14,6 +14,7 @@ import { buildEpcChart } from './epc-chart';
 
 const W = CANVAS.width;
 const H = CANVAS.height;
+let currentBorderRadius = 0;
 
 // ──────────────────────────────────────
 // Fabric.js object builders
@@ -39,6 +40,7 @@ function image(name: string, left: number, top: number, width: number, height: n
   return {
     type: 'Image', name, left, top, width, height,
     src: url, _imageUrl: url, _targetWidth: width, _targetHeight: height,
+    _borderRadius: currentBorderRadius,
     crossOrigin: 'anonymous',
     selectable: true, evented: true, hasControls: true,
     lockMovementX: false, lockMovementY: false,
@@ -407,6 +409,7 @@ export function generateFromTemplate(
   genText: GeneratedText,
   qrDataUrl?: string,
 ): BrochurePage[] {
+  currentBorderRadius = template.style.imageBorderRadius || 0;
   const assignments = mapPhotosToPages(photos);
   const getPhotos = (i: number) => assignments.find((a: PagePhotoAssignment) => a.pageIndex === i)?.photos || [];
 

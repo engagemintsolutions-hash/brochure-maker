@@ -27,6 +27,7 @@ export function getCanvasJson(canvas: fabric.Canvas): object {
     if (src._imageUrl) obj._imageUrl = src._imageUrl;
     if (src._targetWidth) obj._targetWidth = src._targetWidth;
     if (src._targetHeight) obj._targetHeight = src._targetHeight;
+    if (src._borderRadius) obj._borderRadius = src._borderRadius;
   });
   return json;
 }

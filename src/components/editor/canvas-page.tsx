@@ -73,7 +73,7 @@ export function CanvasPage() {
         const imagePromises: Promise<void>[] = [];
 
         for (const obj of objects) {
-          const fabricObj = obj as fabric.FabricObject & { _imageUrl?: string; _targetWidth?: number; _targetHeight?: number; name?: string };
+          const fabricObj = obj as fabric.FabricObject & { _imageUrl?: string; _targetWidth?: number; _targetHeight?: number; _borderRadius?: number; name?: string };
           if (fabricObj.type === 'Image' && fabricObj._imageUrl) {
             const imageUrl = fabricObj._imageUrl;
             const targetLeft = fabricObj.left || 0;
@@ -105,11 +105,14 @@ export function CanvasPage() {
                   _targetHeight: th,
                 } as Record<string, unknown>);
 
+                const br = (fabricObj as any)._borderRadius || 0;
                 img.clipPath = new fabric.Rect({
                   left: targetLeft,
                   top: targetTop,
                   width: tw,
                   height: th,
+                  rx: br,
+                  ry: br,
                   absolutePositioned: true,
                 });
 
