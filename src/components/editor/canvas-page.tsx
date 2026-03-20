@@ -106,6 +106,7 @@ export function CanvasPage() {
                 } as Record<string, unknown>);
 
                 const br = (fabricObj as any)._borderRadius || 0;
+                // Clip to frame bounds
                 img.clipPath = new fabric.Rect({
                   left: targetLeft,
                   top: targetTop,
@@ -115,6 +116,21 @@ export function CanvasPage() {
                   ry: br,
                   absolutePositioned: true,
                 });
+                // For rounded corners, Fabric needs inverted clip workaround
+                // Set the image's own rx/ry via a wrapper approach
+                if (br > 0) {
+                  // Override: use non-absolute clip with proper dimensions
+                  const clipW = tw / scale;
+                  const clipH = th / scale;
+                  img.clipPath = new fabric.Rect({
+                    left: -clipW / 2,
+                    top: -clipH / 2,
+                    width: clipW,
+                    height: clipH,
+                    rx: br / scale,
+                    ry: br / scale,
+                  });
+                }
 
                 canvas.remove(fabricObj);
                 canvas.add(img);
