@@ -265,6 +265,62 @@ export function PropertyForm({ value, onChange }: PropertyFormProps) {
             />
           </div>
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Agency Logo</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                  const dataUrl = ev.target?.result as string;
+                  if (dataUrl) update('agentLogo', dataUrl);
+                };
+                reader.readAsDataURL(file);
+              }}
+              className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm"
+            />
+            {value.agentLogo && (
+              <img src={value.agentLogo} alt="Logo preview" className="h-10 mt-2 object-contain" />
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Listing URL (for QR code)</label>
+            <input
+              type="url"
+              value={value.listingUrl || ''}
+              onChange={(e) => update('listingUrl', e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent outline-none"
+              placeholder="e.g. https://www.rightmove.co.uk/..."
+            />
+          </div>
+        </div>
+      </fieldset>
+
+      {/* Floor Plan */}
+      <fieldset>
+        <legend className="text-lg font-semibold mb-3">Floor Plan (Optional)</legend>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              const dataUrl = ev.target?.result as string;
+              if (dataUrl) update('floorPlanUrl', dataUrl);
+            };
+            reader.readAsDataURL(file);
+          }}
+          className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm"
+        />
+        {value.floorPlanUrl && (
+          <img src={value.floorPlanUrl} alt="Floor plan preview" className="h-32 mt-3 object-contain border border-gray-200 rounded" />
+        )}
       </fieldset>
     </div>
   );

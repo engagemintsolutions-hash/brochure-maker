@@ -6,6 +6,10 @@ import { Sparkles, Loader2, Bold, Italic } from 'lucide-react';
 import { useEditorStore } from '@/stores/editor-store';
 import { fabricRef } from './canvas-page-ref';
 import { useToast } from '@/components/ui/toast';
+import { getCanvasJson } from '@/lib/editor/fabric-helpers';
+import { PhotoLibrary } from './photo-library';
+import { LayersPanel } from './layers-panel';
+import { FONT_GROUPS } from '@/lib/font-registry';
 
 export function PropertiesPanel() {
   const selectedObjectId = useEditorStore((s) => s.selectedObjectId);
@@ -42,7 +46,7 @@ export function PropertiesPanel() {
 
         // Save the change
         const store = useEditorStore.getState();
-        const json = canvas?.toJSON();
+        const json = canvas ? getCanvasJson(canvas) : null;
         if (json) {
           store.pushUndo();
           store.updatePageCanvas(store.activePageIndex, json);
@@ -58,23 +62,26 @@ export function PropertiesPanel() {
 
   if (!selectedObjectId) {
     return (
-      <div className="w-64 bg-white border-l border-gray-200 p-4 flex-shrink-0">
+      <div data-testid="properties-panel" className="w-64 bg-white border-l border-gray-200 p-4 flex-shrink-0 overflow-y-auto">
         <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
           Properties
         </h3>
         <p className="text-sm text-gray-400">Select an element on the canvas to edit its properties.</p>
-        <div className="mt-6 text-xs text-gray-400 space-y-2">
+        <div className="mt-4 text-xs text-gray-400 space-y-1.5">
           <p><strong>Double-click</strong> text to edit inline</p>
           <p><strong>Drag</strong> to move elements</p>
           <p><strong>Corners</strong> to resize</p>
           <p><strong>Ctrl+Z</strong> to undo</p>
+          <p><strong>Drop</strong> photos from library or desktop</p>
         </div>
+        <PhotoLibrary />
+        <LayersPanel />
       </div>
     );
   }
 
   return (
-    <div className="w-64 bg-white border-l border-gray-200 p-4 flex-shrink-0 overflow-y-auto">
+    <div data-testid="properties-panel" className="w-64 bg-white border-l border-gray-200 p-4 flex-shrink-0 overflow-y-auto">
       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
         Properties
       </h3>
@@ -96,11 +103,13 @@ export function PropertiesPanel() {
               }}
               className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm"
             >
-              <option value="Inter">Inter</option>
-              <option value="Playfair Display">Playfair Display</option>
-              <option value="Georgia">Georgia</option>
-              <option value="Arial">Arial</option>
-              <option value="Times New Roman">Times New Roman</option>
+              {FONT_GROUPS.map((group) => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.fonts.map((f) => (
+                    <option key={f.value} value={f.value}>{f.name}</option>
+                  ))}
+                </optgroup>
+              ))}
             </select>
           </div>
 
@@ -120,20 +129,33 @@ export function PropertiesPanel() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Weight</label>
-              <select
-                value={String((selectedObject as fabric.Textbox).fontWeight || 'normal')}
-                onChange={(e) => {
-                  (selectedObject as fabric.Textbox).set('fontWeight', e.target.value);
-                  canvas?.renderAll();
-                }}
-                className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm"
-              >
-                <option value="normal">Normal</option>
-                <option value="bold">Bold</option>
-                <option value="300">Light</option>
-                <option value="600">Semibold</option>
-              </select>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Style</label>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => {
+                    const tb = selectedObject as fabric.Textbox;
+                    tb.set('fontWeight', tb.fontWeight === 'bold' ? 'normal' : 'bold');
+                    canvas?.renderAll();
+                  }}
+                  className={`flex-1 py-1 text-xs font-bold rounded border ${(selectedObject as fabric.Textbox).fontWeight === 'bold' ? 'bg-gray-200 border-gray-400' : 'border-gray-200 hover:bg-gray-50'}`}
+                >B</button>
+                <button
+                  onClick={() => {
+                    const tb = selectedObject as fabric.Textbox;
+                    tb.set('fontStyle', tb.fontStyle === 'italic' ? 'normal' : 'italic');
+                    canvas?.renderAll();
+                  }}
+                  className={`flex-1 py-1 text-xs italic rounded border ${(selectedObject as fabric.Textbox).fontStyle === 'italic' ? 'bg-gray-200 border-gray-400' : 'border-gray-200 hover:bg-gray-50'}`}
+                >I</button>
+                <button
+                  onClick={() => {
+                    const tb = selectedObject as fabric.Textbox;
+                    tb.set('underline', !tb.underline);
+                    canvas?.renderAll();
+                  }}
+                  className={`flex-1 py-1 text-xs underline rounded border ${(selectedObject as fabric.Textbox).underline ? 'bg-gray-200 border-gray-400' : 'border-gray-200 hover:bg-gray-50'}`}
+                >U</button>
+              </div>
             </div>
           </div>
 
@@ -262,6 +284,26 @@ export function PropertiesPanel() {
         </div>
       )}
 
+      {/* Opacity (for both text and images) */}
+      {(isText || isImage) && (
+        <div className="border-t border-gray-200 pt-3 mt-3">
+          <label className="block text-xs font-medium text-gray-600 mb-1">Opacity</label>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={selectedObject?.opacity || 1}
+            onChange={(e) => {
+              selectedObject?.set('opacity', parseFloat(e.target.value));
+              canvas?.requestRenderAll();
+            }}
+            className="w-full h-1.5 accent-[var(--accent)]"
+          />
+          <div className="text-[10px] text-gray-400 text-right">{Math.round((selectedObject?.opacity || 1) * 100)}%</div>
+        </div>
+      )}
+
       {/* Image properties */}
       {isImage && (
         <div className="space-y-4">
@@ -274,8 +316,38 @@ export function PropertiesPanel() {
             <div>W: {Math.round((selectedObject?.width || 0) * (selectedObject?.scaleX || 1))}</div>
             <div>H: {Math.round((selectedObject?.height || 0) * (selectedObject?.scaleY || 1))}</div>
           </div>
+          <button
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'image/*';
+              input.onchange = async (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0];
+                if (!file || !canvas || !selectedObject) return;
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                  const dataUrl = ev.target?.result as string;
+                  if (!dataUrl) return;
+                  const name = (selectedObject as fabric.FabricObject & { name?: string }).name || '';
+                  const { loadImageIntoFrame } = await import('@/lib/editor/fabric-helpers');
+                  await loadImageIntoFrame(canvas, name, dataUrl);
+                  const store = useEditorStore.getState();
+                  store.pushUndo();
+                  const json = (await import('@/lib/editor/fabric-helpers')).getCanvasJson(canvas);
+                  store.updatePageCanvas(store.activePageIndex, json);
+                };
+                reader.readAsDataURL(file);
+              };
+              input.click();
+            }}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm border border-gray-200 rounded hover:bg-gray-50 transition-colors"
+          >
+            Replace Image
+          </button>
         </div>
       )}
+
+      <PhotoLibrary />
     </div>
   );
 }

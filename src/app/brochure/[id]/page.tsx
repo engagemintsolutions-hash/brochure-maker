@@ -28,14 +28,20 @@ export default function BrochureEditorPage() {
           // Generate template pages if not already present
           let brochurePages = data.pages;
           if (!brochurePages || brochurePages.length === 0) {
-            const templateId = (data as unknown as Record<string, unknown>).templateId as string || 'kf-residential';
-            const template = getTemplateById(templateId);
+            const template = getTemplateById((data as unknown as Record<string, unknown>).templateId as string || 'editorial-magazine');
             if (template) {
+              // Generate QR code if listing URL provided
+              let qrDataUrl: string | undefined;
+              if (data.propertyDetails?.listingUrl) {
+                const { generateQrDataUrl } = await import('@/lib/qr-generator');
+                qrDataUrl = await generateQrDataUrl(data.propertyDetails.listingUrl);
+              }
               brochurePages = generateFromTemplate(
                 template,
                 data.propertyDetails,
                 data.photos,
                 data.generatedText,
+                qrDataUrl,
               );
             }
           }

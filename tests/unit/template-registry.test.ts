@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { templates, getTemplateById, templateCategories } from '@/lib/templates/template-registry';
+import { templates, getTemplateById } from '@/lib/templates/template-registry';
 
 describe('template-registry', () => {
   it('has 30 templates', () => {
@@ -22,29 +22,26 @@ describe('template-registry', () => {
 
   it('every template has valid style options', () => {
     const validOverlays = ['dark', 'light', 'gradient-bottom', 'none'];
-    const validFooters = ['solid', 'thin-line', 'none', 'gradient'];
-    const validLayouts = ['A', 'B', 'C'];
+    const validFooters = ['solid', 'thin-line', 'none'];
 
     for (const t of templates) {
       expect(validOverlays).toContain(t.style.coverOverlay);
       expect(validFooters).toContain(t.style.footerStyle);
-      expect(validLayouts).toContain(t.style.layoutVariant);
+      expect(t.layoutVariant).toBeTruthy();
     }
   });
 
-  it('distributes layout variants across categories', () => {
-    for (const cat of templateCategories) {
-      const catTemplates = templates.filter((t) => t.category === cat.id);
-      const variants = new Set(catTemplates.map((t) => t.style.layoutVariant));
-      // Each category should have at least 2 different layout variants
-      expect(variants.size).toBeGreaterThanOrEqual(2);
+  it('every template has a layoutVariant and description', () => {
+    for (const t of templates) {
+      expect(t.layoutVariant).toBeTruthy();
+      expect(t.description).toBeTruthy();
     }
   });
 
   it('getTemplateById returns correct template', () => {
-    const t = getTemplateById('sir-classic');
+    const t = getTemplateById('full-bleed-cinematic');
     expect(t).toBeDefined();
-    expect(t?.name).toBe("Sotheby's Classic");
+    expect(t?.name).toBe('Cinematic');
   });
 
   it('getTemplateById returns undefined for invalid id', () => {
@@ -52,7 +49,6 @@ describe('template-registry', () => {
   });
 
   it('no template has body text contrast below 4.5:1 on its background', () => {
-    // Simple relative luminance check for WCAG AA
     function hexToRgb(hex: string) {
       const r = parseInt(hex.slice(1, 3), 16) / 255;
       const g = parseInt(hex.slice(3, 5), 16) / 255;
@@ -79,11 +75,8 @@ describe('template-registry', () => {
     }
   });
 
-  it('has 6 categories with 5 templates each', () => {
-    expect(templateCategories).toHaveLength(6);
-    for (const cat of templateCategories) {
-      const count = templates.filter((t) => t.category === cat.id).length;
-      expect(count, `${cat.label} has ${count} templates`).toBe(5);
-    }
+  it('has diverse layout variants', () => {
+    const variants = new Set(templates.map((t) => t.layoutVariant));
+    expect(variants.size).toBeGreaterThanOrEqual(5);
   });
 });

@@ -19,7 +19,7 @@ export default function NewBrochurePage() {
   const [step, setStep] = useState<Step>('photos');
   const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState('kf-residential');
+  const [selectedTemplate, setSelectedTemplate] = useState('editorial-magazine');
   const [property, setProperty] = useState<Partial<PropertyDetails>>({
     priceQualifier: 'guide_price',
     tenure: 'freehold',

@@ -5,6 +5,7 @@ import { PageNavigator } from './page-navigator';
 import { CanvasPage } from './canvas-page';
 import { PropertiesPanel } from './properties-panel';
 import { KeyboardShortcutsModal } from './keyboard-shortcuts-modal';
+import { ContextMenu } from './context-menu';
 
 export function CanvasEditor() {
   return (
@@ -18,6 +19,7 @@ export function CanvasEditor() {
         <PropertiesPanel />
       </div>
       <KeyboardShortcutsModal />
+      <ContextMenu />
     </div>
   );
 }

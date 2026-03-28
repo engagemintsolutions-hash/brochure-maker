@@ -1,10 +1,13 @@
 export const BRAND = {
   accent: '#4A1420',
+  accentDark: '#3a0f18',
+  gold: '#A89863',
+  ivory: '#f9f7f3',
   black: '#1A1A1A',
   darkGray: '#4A4A4A',
   midGray: '#8C8C8C',
   lightGray: '#E5E5E5',
-  offWhite: '#F7F7F7',
+  offWhite: '#f9f7f3',
   white: '#FFFFFF',
 } as const;
 

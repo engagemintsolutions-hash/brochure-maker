@@ -15,6 +15,9 @@ export interface EditorState {
   redoStack: object[][];
   isDirty: boolean;
   isSaving: boolean;
+  thumbnails: Record<number, string>;
+  showGrid: boolean;
+  canvasVersion: number;
 }
 
 export interface EditorActions {
@@ -31,4 +34,7 @@ export interface EditorActions {
   markClean: () => void;
   markDirty: () => void;
   setSaving: (saving: boolean) => void;
+  setThumbnail: (index: number, dataUrl: string) => void;
+  setShowGrid: (show: boolean) => void;
+  bumpCanvasVersion: () => void;
 }

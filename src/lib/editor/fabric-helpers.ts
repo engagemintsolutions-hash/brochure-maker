@@ -18,7 +18,18 @@ export async function loadCanvasFromJson(
 }
 
 export function getCanvasJson(canvas: fabric.Canvas): object {
-  return canvas.toJSON();
+  const json = canvas.toJSON() as { objects: Record<string, unknown>[] };
+  // Preserve custom properties that Fabric strips by default
+  const objects = canvas.getObjects();
+  json.objects.forEach((obj, i) => {
+    const src = objects[i] as unknown as Record<string, unknown>;
+    if (src.name) obj.name = src.name;
+    if (src._imageUrl) obj._imageUrl = src._imageUrl;
+    if (src._targetWidth) obj._targetWidth = src._targetWidth;
+    if (src._targetHeight) obj._targetHeight = src._targetHeight;
+    if (src._borderRadius) obj._borderRadius = src._borderRadius;
+  });
+  return json;
 }
 
 export function updateAccentColor(
@@ -80,9 +91,15 @@ export async function loadImageIntoFrame(
   const scaleY = frameHeight / (img.height || 1);
   const scale = Math.max(scaleX, scaleY);
 
+  // Centre image within frame (cover-style: fill and crop)
+  const scaledW = (img.width || 1) * scale;
+  const scaledH = (img.height || 1) * scale;
+  const offsetX = (scaledW - frameWidth) / 2;
+  const offsetY = (scaledH - frameHeight) / 2;
+
   img.set({
-    left: target.left,
-    top: target.top,
+    left: (target.left || 0) - offsetX,
+    top: (target.top || 0) - offsetY,
     scaleX: scale,
     scaleY: scale,
     name: targetName,
@@ -90,11 +107,13 @@ export async function loadImageIntoFrame(
     hasControls: true,
   });
 
-  // Add clip path to constrain to frame
+  // Clip to frame bounds
   img.clipPath = new fabric.Rect({
-    width: frameWidth / scale,
-    height: frameHeight / scale,
-    absolutePositioned: false,
+    left: target.left || 0,
+    top: target.top || 0,
+    width: frameWidth,
+    height: frameHeight,
+    absolutePositioned: true,
   });
 
   // Replace the placeholder
