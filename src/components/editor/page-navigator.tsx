@@ -9,18 +9,21 @@ export function PageNavigator() {
   const setActivePage = useEditorStore((s) => s.setActivePage);
 
   return (
-    <div className="w-52 bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0">
+    <nav className="w-52 bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0" aria-label="Pages">
       <div className="p-3">
         <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
           Pages
         </h3>
-        <div className="space-y-2">
+        <div className="space-y-2" role="list">
           {pages.map((page, index) => (
             <button
               key={index}
               onClick={() => setActivePage(index)}
+              role="listitem"
+              aria-current={activePageIndex === index ? 'page' : undefined}
+              aria-label={`${PAGE_NAMES[index] || `Page ${index + 1}`}${activePageIndex === index ? ' (current)' : ''}`}
               className={`
-                w-full text-left rounded-lg p-2 transition-colors
+                w-full text-left rounded-lg p-2 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--accent)]
                 ${
                   activePageIndex === index
                     ? 'bg-[var(--accent)] bg-opacity-10 border-2 border-[var(--accent)]'
@@ -44,6 +47,6 @@ export function PageNavigator() {
           ))}
         </div>
       </div>
-    </div>
+    </nav>
   );
 }

@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import * as fabric from 'fabric';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2, Bold, Italic } from 'lucide-react';
 import { useEditorStore } from '@/stores/editor-store';
 import { fabricRef } from './canvas-page-ref';
+import { useToast } from '@/components/ui/toast';
 
 export function PropertiesPanel() {
   const selectedObjectId = useEditorStore((s) => s.selectedObjectId);
   const [rewriteInstruction, setRewriteInstruction] = useState('');
   const [isRewriting, setIsRewriting] = useState(false);
+  const { toast } = useToast();
 
   const canvas = fabricRef.current;
   const selectedObject = canvas
@@ -48,6 +50,7 @@ export function PropertiesPanel() {
       }
     } catch (err) {
       console.error('Rewrite failed:', err);
+      toast('Rewrite failed. Please try again.', 'error');
     } finally {
       setIsRewriting(false);
     }
@@ -135,6 +138,63 @@ export function PropertiesPanel() {
           </div>
 
           <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Style</label>
+            <div className="flex gap-1">
+              <button
+                onClick={() => {
+                  const current = (selectedObject as fabric.Textbox).fontWeight;
+                  const isBold = current === 'bold' || current === '700' || Number(current) >= 600;
+                  (selectedObject as fabric.Textbox).set('fontWeight', isBold ? 'normal' : 'bold');
+                  canvas?.renderAll();
+                }}
+                className={`flex-1 py-1.5 rounded border flex items-center justify-center ${
+                  (() => {
+                    const w = (selectedObject as fabric.Textbox).fontWeight;
+                    return w === 'bold' || w === '700' || Number(w) >= 600;
+                  })()
+                    ? 'bg-gray-100 border-gray-400'
+                    : 'border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <Bold className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => {
+                  const current = (selectedObject as fabric.Textbox).fontStyle;
+                  (selectedObject as fabric.Textbox).set('fontStyle', current === 'italic' ? 'normal' : 'italic');
+                  canvas?.renderAll();
+                }}
+                className={`flex-1 py-1.5 rounded border flex items-center justify-center ${
+                  (selectedObject as fabric.Textbox).fontStyle === 'italic'
+                    ? 'bg-gray-100 border-gray-400'
+                    : 'border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <Italic className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Line Height</label>
+            <input
+              type="number"
+              value={Number((selectedObject as fabric.Textbox).lineHeight || 1.2).toFixed(1)}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                if (val >= 0.5 && val <= 3) {
+                  (selectedObject as fabric.Textbox).set('lineHeight', val);
+                  canvas?.renderAll();
+                }
+              }}
+              className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm"
+              min="0.5"
+              max="3"
+              step="0.1"
+            />
+          </div>
+
+          <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Color</label>
             <input
               type="color"
@@ -184,7 +244,7 @@ export function PropertiesPanel() {
             <button
               onClick={handleRewrite}
               disabled={!rewriteInstruction || isRewriting}
-              className="w-full mt-2 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm bg-[var(--accent)] text-white rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full mt-2 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm bg-[var(--accent)] text-white rounded hover:bg-[var(--accent-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isRewriting ? (
                 <>

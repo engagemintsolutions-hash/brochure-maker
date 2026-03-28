@@ -17,9 +17,11 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [isDone, setIsDone] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const handleExport = async () => {
     setIsExporting(true);
+    setExportError(null);
     setProgress({ current: 0, total: pages.length });
 
     try {
@@ -36,6 +38,7 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
       setIsDone(true);
     } catch (err) {
       console.error('Export failed:', err);
+      setExportError('PDF export failed. Please try again.');
     } finally {
       setIsExporting(false);
     }
@@ -50,6 +53,12 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {exportError && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4 text-sm">
+            {exportError}
+          </div>
+        )}
 
         {!isExporting && !isDone && (
           <>
@@ -89,7 +98,7 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
 
             <button
               onClick={handleExport}
-              className="w-full flex items-center justify-center gap-2 bg-[var(--accent)] text-white py-2.5 rounded-md font-medium hover:bg-red-700 transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-[var(--accent)] text-white py-2.5 rounded-md font-medium hover:bg-[var(--accent-dark)] transition-colors"
             >
               <Download className="w-4 h-4" />
               Generate PDF

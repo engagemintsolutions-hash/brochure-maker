@@ -159,15 +159,21 @@ export function CanvasPage() {
     };
   }, [pushUndo, saveCurrentPage, setSelectedObject]);
 
+  // Clipboard for copy/paste
+  const clipboardRef = useRef<object | null>(null);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const canvas = fabricRef.current;
       if (!canvas) return;
 
-      // Don't capture when typing in text
+      // Don't capture when typing in inputs or editing text on canvas
       const target = e.target as HTMLElement;
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+
+      const active = canvas.getActiveObject();
+      const isEditing = active && (active as fabric.Textbox).isEditing;
 
       if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
         e.preventDefault();
@@ -179,11 +185,9 @@ export function CanvasPage() {
       }
 
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        const active = canvas.getActiveObject();
-        if (active && !((active as fabric.Textbox).isEditing)) {
+        if (active && !isEditing) {
           const fabricObj = active as fabric.FabricObject & { name?: string };
           const name = fabricObj.name || '';
-          // Don't delete non-editable elements
           if (!name.includes('footer_bar') && !name.includes('top_bar') && !name.includes('_bg') && !name.includes('overlay')) {
             canvas.remove(active);
             pushUndo();
@@ -192,8 +196,54 @@ export function CanvasPage() {
         }
       }
 
+      if (e.key === 'Escape') {
+        canvas.discardActiveObject();
+        canvas.renderAll();
+        useEditorStore.getState().setSelectedObject(null);
+      }
+
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
+        saveCurrentPage();
+      }
+
+      // Copy
+      if ((e.ctrlKey || e.metaKey) && e.key === 'c' && active && !isEditing) {
+        e.preventDefault();
+        active.clone().then((cloned: fabric.FabricObject) => {
+          clipboardRef.current = cloned;
+        });
+      }
+
+      // Paste
+      if ((e.ctrlKey || e.metaKey) && e.key === 'v' && clipboardRef.current && !isEditing) {
+        e.preventDefault();
+        const clonedObj = clipboardRef.current as fabric.FabricObject;
+        clonedObj.clone().then((pasted: fabric.FabricObject) => {
+          pasted.set({
+            left: (pasted.left || 0) + 20,
+            top: (pasted.top || 0) + 20,
+          });
+          canvas.add(pasted);
+          canvas.setActiveObject(pasted);
+          canvas.renderAll();
+          pushUndo();
+          saveCurrentPage();
+        });
+      }
+
+      // Arrow key nudging
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key) && active && !isEditing) {
+        e.preventDefault();
+        const step = e.shiftKey ? 10 : 1;
+        switch (e.key) {
+          case 'ArrowUp': active.set('top', (active.top || 0) - step); break;
+          case 'ArrowDown': active.set('top', (active.top || 0) + step); break;
+          case 'ArrowLeft': active.set('left', (active.left || 0) - step); break;
+          case 'ArrowRight': active.set('left', (active.left || 0) + step); break;
+        }
+        active.setCoords();
+        canvas.renderAll();
         saveCurrentPage();
       }
     };

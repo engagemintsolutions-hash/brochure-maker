@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { CanvasEditor } from '@/components/editor/canvas-editor';
 import { useEditorStore } from '@/stores/editor-store';
-import { generateBrochureTemplate } from '@/lib/templates/knight-frank';
+import { generateFromTemplate } from '@/lib/templates/generate-from-template';
+import { getTemplateById } from '@/lib/templates/template-registry';
+import { loadBrochure } from '@/lib/supabase/brochures';
 
 export default function BrochureEditorPage() {
   const params = useParams();
@@ -17,23 +20,24 @@ export default function BrochureEditorPage() {
   const pages = useEditorStore((s) => s.pages);
 
   useEffect(() => {
-    const loadBrochure = async () => {
+    const load = async () => {
       try {
-        // Try sessionStorage first (for newly created brochures)
-        const stored = sessionStorage.getItem(`brochure-${id}`);
+        const data = await loadBrochure(id);
 
-        if (stored) {
-          const data = JSON.parse(stored);
-
+        if (data) {
           // Generate template pages if not already present
           let brochurePages = data.pages;
           if (!brochurePages || brochurePages.length === 0) {
-            brochurePages = generateBrochureTemplate(
-              data.propertyDetails,
-              data.photos,
-              data.generatedText,
-              data.accentColor || '#D50032',
-            );
+            const templateId = (data as unknown as Record<string, unknown>).templateId as string || 'kf-residential';
+            const template = getTemplateById(templateId);
+            if (template) {
+              brochurePages = generateFromTemplate(
+                template,
+                data.propertyDetails,
+                data.photos,
+                data.generatedText,
+              );
+            }
           }
 
           setBrochure(
@@ -41,17 +45,13 @@ export default function BrochureEditorPage() {
             data.propertyDetails,
             data.photos,
             data.generatedText,
-            brochurePages,
-            data.accentColor || '#D50032',
+            brochurePages || [],
+            data.accentColor || '#4A1420',
           );
 
           setIsLoading(false);
           return;
         }
-
-        // TODO: Try loading from Supabase
-        // const res = await fetch(`/api/brochure/${id}`);
-        // ...
 
         setError('Brochure not found. Start by creating a new one.');
       } catch (err) {
@@ -62,7 +62,7 @@ export default function BrochureEditorPage() {
       }
     };
 
-    loadBrochure();
+    load();
   }, [id, setBrochure]);
 
   if (isLoading) {
@@ -78,12 +78,12 @@ export default function BrochureEditorPage() {
     return (
       <div className="h-screen flex flex-col items-center justify-center">
         <p className="text-gray-700 mb-4">{error}</p>
-        <a
+        <Link
           href="/brochure/new"
-          className="px-6 py-2.5 bg-[var(--accent)] text-white rounded-md hover:bg-red-700 transition-colors"
+          className="px-6 py-2.5 bg-[var(--accent)] text-white rounded-md hover:bg-[var(--accent-dark)] transition-colors"
         >
           Create New Brochure
-        </a>
+        </Link>
       </div>
     );
   }

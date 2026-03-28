@@ -9,13 +9,13 @@ interface ColorPickerProps {
 }
 
 const PRESET_COLORS = [
+  '#4A1420', // Doorstep burgundy
   '#D50032', // Knight Frank red
-  '#002855', // Savills navy
-  '#C5A572', // Gold
-  '#1B4D3E', // Heritage green
-  '#2C3E50', // Dark slate
-  '#8B4513', // Saddle brown
-  '#4A0E4E', // Deep purple
+  '#002349', // Sotheby's navy
+  '#C8A96E', // Gold
+  '#1B5E3B', // Heritage green
+  '#6B207D', // Chestertons purple
+  '#017163', // Foxtons teal
   '#1A1A1A', // Black
 ];
 
